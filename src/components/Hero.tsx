@@ -6,7 +6,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-0"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-0 bg-[#080d1a]"
     >
       {/* Gradient background blobs */}
       <div className="absolute inset-0 -z-10">

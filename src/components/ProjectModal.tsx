@@ -185,9 +185,10 @@ export default function ProjectModal({ project, onClose }: Props) {
               </div>
               <button
                 onClick={onClose}
-                className="ml-4 shrink-0 text-slate-500 hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg"
+                className="ml-4 shrink-0 flex items-center gap-1.5 bg-white/10 hover:bg-red-500/20 border border-white/15 hover:border-red-500/40 text-slate-300 hover:text-white transition-all duration-200 px-3 py-2 rounded-xl text-sm font-medium"
               >
-                <FiX className="text-xl" />
+                <FiX className="text-base" />
+                <span className="hidden sm:inline">Close</span>
               </button>
             </div>
 
@@ -241,6 +242,17 @@ export default function ProjectModal({ project, onClose }: Props) {
                   {t}
                 </span>
               ))}
+            </div>
+
+            {/* Mobile sticky close button */}
+            <div className="md:hidden sticky bottom-0 p-4 bg-[#0d1424] border-t border-white/10">
+              <button
+                onClick={onClose}
+                className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-red-500/20 border border-white/15 hover:border-red-500/30 text-white font-semibold py-3 rounded-xl transition-all duration-200"
+              >
+                <FiX className="text-lg" />
+                Close
+              </button>
             </div>
           </motion.div>
         </motion.div>
