@@ -67,7 +67,7 @@ export default function Hero() {
           transition={{ delay: 0.4 }}
           className="max-w-2xl mx-auto text-slate-400 text-base md:text-lg leading-relaxed mb-10"
         >
-          DevOps Engineer experienced in building and operating scalable cloud-native infrastructure using Kubernetes, Terraform, and GitOps practices with ArgoCD, delivering highly available and automated platforms on AWS
+          DevOps Engineer specializing in building scalable infrastructure and reliable platforms, with a strong focus on automation, system reliability, and enabling fast, safe software delivery.
         </motion.p>
 
         {/* CTAs */}
