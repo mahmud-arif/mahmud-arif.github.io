@@ -40,7 +40,7 @@ export default function About() {
               <div className="relative bg-[#0f172a] border border-white/5 rounded-2xl p-8">
                 <p className="text-slate-300 text-base leading-relaxed mb-5">
                   I&apos;m a <span className="text-sky-400 font-semibold">DevOps Engineer</span> at{" "}
-                  <span className="text-white font-semibold">Newroz Telecom</span>, responsible for
+                  <span className="text-white font-semibold">Newroz Technologies Limited</span>, responsible for
                   building and operating scalable cloud infrastructure and internal platforms.
                 </p>
                 <p className="text-slate-300 text-base leading-relaxed mb-5">
