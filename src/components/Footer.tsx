@@ -29,13 +29,13 @@ export default function Footer() {
 
         {/* Socials */}
         <div className="flex gap-4 text-slate-500 text-xl">
-          <a href="https://github.com/mahmud" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">
+          <a href="https://github.com/mahmud-arif" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">
             <FiGithub />
           </a>
-          <a href="https://linkedin.com/in/mahmud" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">
+          <a href="https://www.linkedin.com/in/arif-mahmud-03611a138/" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">
             <FiLinkedin />
           </a>
-          <a href="mailto:mahmud@newroz.iq" className="hover:text-sky-400 transition-colors">
+          <a href="mailto:mahmudarif1175@gmail.com" className="hover:text-sky-400 transition-colors">
             <FiMail />
           </a>
         </div>

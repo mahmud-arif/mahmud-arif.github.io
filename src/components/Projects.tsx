@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { FiExternalLink, FiGithub, FiCode } from "react-icons/fi";
 import {
   SiKubernetes, SiTerraform, SiArgo,
-  SiGooglecloud, SiPostgresql, SiJenkins, SiMysql,
+  SiGooglecloud, SiPostgresql, SiJenkins, SiMysql, SiDocker,
 } from "react-icons/si";
 import { FiDatabase, FiCloud } from "react-icons/fi";
 import ProjectModal, { ProjectDetail } from "./ProjectModal";
@@ -14,9 +14,10 @@ import { projectDetails } from "./projectData";
 // Map project card → detail key
 const detailKeyMap: Record<string, string> = {
   "Loto Project — Full Platform": "loto",
-  "Hakim — Healthcare Platform": "hakim",
+  "Hakim — Automotive Services": "hakim",
   "eSIM Platform Infrastructure": "esim",
   "Travluence — Travel Infra": "travluence",
+  "Data Pipeline — GCP & AWS": "dataPipeline",
 };
 
 const projects = [
@@ -30,19 +31,19 @@ const projects = [
     category: "Platform Engineering",
   },
   {
-    title: "Hakim — Healthcare Platform",
+    title: "Hakim — Automotive Services",
     description:
-      "Microservices infrastructure for a B2B/B2C healthcare booking platform. Multi-environment Docker Compose and Kubernetes setups, code-deploy pipelines, admin + service-center portals, finance and ops-tracking services.",
-    tags: ["Kubernetes", "Docker", "AWS CodeDeploy", "PostgreSQL", "Nginx"],
-    icons: [<SiKubernetes key="k8s" />, <SiPostgresql key="pg" />, <FiCloud key="aws" />],
+      "A smart automotive services platform connecting customers, service centers, and field operators with real-time tracking, dispatch, and payments.",
+    tags: ["Docker", "AWS CodeDeploy", "PostgreSQL", "Nginx", "EC2"],
+    icons: [<SiDocker key="docker" />, <SiPostgresql key="pg" />, <FiCloud key="aws" />],
     color: "indigo",
-    category: "Healthcare · SaaS",
+    category: "Automotive · SaaS",
   },
   {
     title: "Data Pipeline — GCP & AWS",
     description:
-      "Production data pipeline spanning GCP BigQuery, AWS DMS for database migration, event-driven Lambda processors, Airbyte for ELT, and S3 data lake. Terraform-managed from scratch.",
-    tags: ["Terraform", "GCP BigQuery", "AWS DMS", "Lambda", "Airbyte", "S3"],
+      "Cross-cloud data migration pipeline: AWS DMS replicates RDS PostgreSQL → S3, Google Storage Transfer syncs S3 → GCS, and Go-based Cloud Functions load data into BigQuery with parallel-safe idempotency, batch control tables, and CloudWatch + SNS alerting.",
+    tags: ["Terraform", "GCP BigQuery", "AWS DMS", "Go", "Cloud Functions", "S3", "GCS"],
     icons: [<SiTerraform key="tf" />, <SiGooglecloud key="gcp" />, <FiCloud key="aws" />, <FiDatabase key="db" />],
     color: "emerald",
     category: "Data Engineering",

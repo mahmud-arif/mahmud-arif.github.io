@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { FiServer, FiCloud, FiShield, FiCpu } from "react-icons/fi";
 
 const highlights = [
-  { icon: <FiCloud className="text-sky-400 text-xl" />, text: "5+ years designing cloud-native infrastructure on AWS & GCP" },
-  { icon: <FiServer className="text-indigo-400 text-xl" />, text: "Kubernetes cluster management for production workloads" },
-  { icon: <FiShield className="text-emerald-400 text-xl" />, text: "GitOps workflows with ArgoCD, Atlantis & Terraform" },
-  { icon: <FiCpu className="text-violet-400 text-xl" />, text: "Data pipeline engineering with Airbyte, DMS & Lambda" },
+  { icon: <FiCloud className="text-sky-400 text-xl" />, text: "Full infrastructure lifecycle — from provisioning to production on AWS EKS, EC2 & Docker" },
+  { icon: <FiServer className="text-indigo-400 text-xl" />, text: "Supporting Hakim, eSIM, Loto & internal data platforms in production" },
+  { icon: <FiShield className="text-emerald-400 text-xl" />, text: "GitOps workflows with ArgoCD, Atlantis & Terraform across multi-environment setups" },
+  { icon: <FiCpu className="text-violet-400 text-xl" />, text: "Strong focus on IaC, automation, platform reliability & observability" },
 ];
 
 export default function About() {
@@ -39,23 +39,25 @@ export default function About() {
               <div className="absolute -inset-1 bg-gradient-to-r from-sky-500/20 to-indigo-500/20 rounded-2xl blur-sm" />
               <div className="relative bg-[#0f172a] border border-white/5 rounded-2xl p-8">
                 <p className="text-slate-300 text-base leading-relaxed mb-5">
-                  I&apos;m a <span className="text-sky-400 font-semibold">Senior DevOps Engineer</span> at{" "}
-                  <span className="text-white font-semibold">Newroz Telecom</span>, where I own the
-                  entire cloud infrastructure lifecycle — from provisioning bare-metal
-                  environments to deploying production microservices via GitOps.
+                  I&apos;m a <span className="text-sky-400 font-semibold">DevOps Engineer</span> at{" "}
+                  <span className="text-white font-semibold">Newroz Telecom</span>, responsible for
+                  building and operating scalable cloud infrastructure and internal platforms.
                 </p>
                 <p className="text-slate-300 text-base leading-relaxed mb-5">
-                  My work spans multiple products including{" "}
-                  <span className="text-indigo-400">Hakim</span>,{" "}
-                  <span className="text-indigo-400">eSIM</span>,{" "}
-                  <span className="text-indigo-400">Loto</span>, and data platforms — each
-                  running on a battle-tested Kubernetes foundation with full observability,
-                  security and automated deployments.
+                  I manage the full infrastructure lifecycle — from provisioning environments
+                  to running production workloads on{" "}
+                  <span className="text-sky-400 font-medium">Amazon EKS</span>,{" "}
+                  <span className="text-sky-400 font-medium">Docker</span>, and{" "}
+                  <span className="text-sky-400 font-medium">Amazon EC2</span>.
                 </p>
                 <p className="text-slate-300 text-base leading-relaxed">
-                  I believe in <span className="text-emerald-400 font-medium">infrastructure as code</span>,
-                  everything in Git, and platforms that let developers ship faster
-                  without worrying about the underlying stack.
+                  My work supports multiple products including{" "}
+                  <span className="text-indigo-400">Hakim</span>,{" "}
+                  <span className="text-indigo-400">eSIM</span>,{" "}
+                  <span className="text-indigo-400">Loto</span>, and internal data platforms —
+                  with a strong focus on{" "}
+                  <span className="text-emerald-400 font-medium">Infrastructure as Code</span>,
+                  GitOps, automation, and platform reliability.
                 </p>
               </div>
             </div>

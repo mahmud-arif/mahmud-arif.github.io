@@ -55,9 +55,9 @@ export default function Hero() {
           transition={{ delay: 0.3 }}
           className="text-xl md:text-2xl text-slate-400 font-medium mb-6"
         >
-          Senior{" "}
+    
           <span className="text-sky-400 font-semibold">DevOps Engineer</span>{" "}
-          · Cloud Infrastructure · Platform Engineering
+          | Cloud Infrastructure | Platform Engineering
         </motion.p>
 
         {/* Description */}
@@ -67,9 +67,7 @@ export default function Hero() {
           transition={{ delay: 0.4 }}
           className="max-w-2xl mx-auto text-slate-400 text-base md:text-lg leading-relaxed mb-10"
         >
-          I design and operate scalable cloud-native infrastructure using
-          Kubernetes, Terraform, and ArgoCD — delivering reliable platforms on
-          AWS and GCP for high-growth products.
+          DevOps Engineer experienced in building and operating scalable cloud-native infrastructure using Kubernetes, Terraform, and GitOps practices with ArgoCD, delivering highly available and automated platforms on AWS
         </motion.p>
 
         {/* CTAs */}
@@ -109,9 +107,9 @@ export default function Hero() {
           className="flex justify-center gap-6"
         >
           {[
-            { icon: <FiGithub />, href: "https://github.com/mahmud", label: "GitHub" },
-            { icon: <FiLinkedin />, href: "https://linkedin.com/in/mahmud", label: "LinkedIn" },
-            { icon: <FiMail />, href: "mailto:mahmud@example.com", label: "Email" },
+            { icon: <FiGithub />, href: "https://github.com/mahmud-arif", label: "GitHub" },
+            { icon: <FiLinkedin />, href: "https://www.linkedin.com/in/arif-mahmud-03611a138/", label: "LinkedIn" },
+            { icon: <FiMail />, href: "mailto:mahmudarif1175@gmail.com", label: "Email" },
           ].map((s) => (
             <a
               key={s.label}

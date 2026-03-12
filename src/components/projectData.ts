@@ -2,13 +2,14 @@ import { ProjectDetail } from "./ProjectModal";
 
 export const projectDetails: Record<string, ProjectDetail> = {
   hakim: {
-    title: "Hakim — Healthcare Platform",
+    title: "Hakim — Automotive Services",
     description:
-      "Terraform-managed AWS infrastructure for a B2B/B2C healthcare platform: VPC with multi-AZ subnets, ALB + ACM + Cloudflare DNS, RDS PostgreSQL, EC2 compute, SQS/SNS event bus, S3, IAM and CodeDeploy — all workspace-aware for dev/stg/prd.",
-    tags: ["Terraform", "AWS VPC", "ALB", "ACM", "RDS PostgreSQL", "EC2", "SQS", "SNS", "S3", "CloudWatch", "IAM", "CodeDeploy", "Cloudflare", "ECR"],
+      "A smart automotive services platform connecting customers, service centers, and field operators with real-time tracking, dispatch, and payments. Terraform-managed AWS infrastructure: VPC, ALB + ACM + Cloudflare DNS, RDS PostgreSQL, EC2 compute, SQS/SNS event bus, S3, IAM and CodeDeploy — all workspace-aware for dev/stg/prd.",
+    tags: ["Terraform", "AWS VPC", "ALB", "ACM", "RDS PostgreSQL", "EC2", "SQS", "SNS", "S3", "Docker", "CodeDeploy", "Cloudflare"],
+
     color: "indigo",
     hld: {
-      title: "Hakim — AWS High Level Architecture",
+      title: "Hakim — Automotive Platform Architecture",
       layers: [
         {
           label: "DNS & TLS",
@@ -1711,6 +1712,361 @@ module "cloudflare" {
   ssl_mode = "full" # Cloudflare HTTPS, ALB HTTP
   enable_cache_rules = false
 }`,
+      },
+    ],
+  },
+
+  dataPipeline: {
+    title: "Data Pipeline — GCP & AWS",
+    description:
+      "Cross-cloud data migration pipeline: AWS DMS replicates two RDS PostgreSQL databases (fib-remit, fib-kartat) to S3, Google Storage Transfer syncs S3 → GCS, and Go Cloud Functions load into BigQuery with parallel-safe idempotency, batch/file control tables, CloudWatch log metric filters, and SNS email alerting.",
+    tags: ["Terraform", "AWS DMS", "GCP BigQuery", "Go", "Cloud Functions", "S3", "GCS", "Lambda", "CloudWatch", "SNS", "Storage Transfer"],
+    color: "emerald",
+    hld: {
+      title: "Cross-Cloud Data Pipeline — High Level Architecture",
+      layers: [
+        {
+          label: "Source — AWS RDS PostgreSQL",
+          color: "sky",
+          items: ["fib-remit RDS (fibremit_pgdb)", "fib-kartat RDS", "DMS Source Endpoints (port 5432)", "VPC peering: DMS VPC ↔ fib-one VPC, fib-kartat VPC"],
+        },
+        {
+          label: "AWS DMS Replication",
+          color: "indigo",
+          items: ["DMS Replication Instance (dedicated VPC)", "Full-load + CDC tasks per source", "S3 target: date-partitioned CSV (YYYYMMDD)", "Lambda: start/stop DMS tasks on schedule", "IAM roles: dms-vpc-role, dms-s3-role"],
+        },
+        {
+          label: "Monitoring & Alerting",
+          color: "rose",
+          items: ["CloudWatch Log Group: dms-tasks-*", "Metric filter: ERROR pattern → DmsErrorCount", "CloudWatch Alarm: threshold ≥ 1 error/60s", "SNS topic → email: infra@newroztech.com"],
+        },
+        {
+          label: "Cross-Cloud Transfer — S3 → GCS",
+          color: "amber",
+          items: ["Google Storage Transfer Job (every schedule)", "Source: S3 public/ path per source DB", "Sink: GCS destination bucket (versioned)", "Overwrite on DIFFERENT, delete unique in sink", "PubSub notifications on transfer completion"],
+        },
+        {
+          label: "GCP Cloud Functions (Go)",
+          color: "violet",
+          items: ["HTTP-triggered Cloud Function per pipeline", "Parallel-safe idempotency checks", "Batch control: _migration_batch_control", "File control: _migration_file_control", "Table control: _migration_control", "AlertManager writes to BigQuery alert tables"],
+        },
+        {
+          label: "BigQuery Data Warehouse",
+          color: "emerald",
+          items: ["Dataset per source (fib_remit, fib_kartat)", "Clustered metadata tables (migration_status, table_name)", "Schema files: JSON per table in /schemas/", "Service Account: pipeline-sa (OWNER role)", "Custom Cloud Build SA for function deploys"],
+        },
+      ],
+    },
+    repoStructure: [
+      {
+        name: "prd-pipeline-new/", type: "folder", children: [
+          { name: "dms.tf", type: "file" },
+          { name: "fib-remit-dms-task.tf", type: "file" },
+          { name: "fib-kartat-dms-task.tf", type: "file" },
+          { name: "dmsvpc-fibonevpc-peering.tf", type: "file" },
+          { name: "dmsvpc-fibkartatvpc-peering.tf", type: "file" },
+          { name: "monitor.tf", type: "file" },
+          { name: "on-off-fib-remit-task.tf", type: "file" },
+          { name: "s3.tf", type: "file" },
+          { name: "vpc.tf", type: "file" },
+          { name: "iam.tf", type: "file" },
+          { name: "provider.tf", type: "file" },
+          { name: "var.tf", type: "file" },
+          { name: "start_dms_task.py", type: "file" },
+          { name: "stop_dms_task.py", type: "file" },
+        ],
+      },
+      {
+        name: "gcp-data-pipeline/", type: "folder", children: [
+          { name: "big-query-fib-remit.tf", type: "file" },
+          { name: "big-query-fib-kartat.tf", type: "file" },
+          { name: "s3-to-gcp-fib-remit.tf", type: "file" },
+          { name: "s3-to-gcp-fib-kartat.tf", type: "file" },
+          { name: "service-account.tf", type: "file" },
+          { name: "api.tf", type: "file" },
+          { name: "locals.tf", type: "file" },
+          { name: "provider.tf", type: "file" },
+          { name: "variables.tf", type: "file" },
+          { name: "makefile", type: "file" },
+          { name: "functions/", type: "folder", children: [
+            { name: "migration-fib-remit/", type: "folder", children: [
+              { name: "main.go", type: "file" },
+              { name: "config.go", type: "file" },
+              { name: "control_ops.go", type: "file" },
+              { name: "file_ops.go", type: "file" },
+              { name: "load_ops.go", type: "file" },
+              { name: "lock_manager.go", type: "file" },
+              { name: "table_ops.go", type: "file" },
+              { name: "alert_manager.go", type: "file" },
+              { name: "types.go", type: "file" },
+              { name: "cleanup.go", type: "file" },
+            ]},
+            { name: "migration-fib-kartat/", type: "folder", children: [
+              { name: "main.go", type: "file" },
+              { name: "config.go", type: "file" },
+              { name: "control_ops.go", type: "file" },
+              { name: "load_ops.go", type: "file" },
+              { name: "lock_manager.go", type: "file" },
+              { name: "alert_manager.go", type: "file" },
+              { name: "types.go", type: "file" },
+            ]},
+          ]},
+          { name: "schemas/", type: "folder", children: [
+            { name: "fib_remit/service_user.json", type: "file" },
+            { name: "fib_kartat/user.json", type: "file" },
+            { name: "metadata/fib_remit/migration_control.json", type: "file" },
+            { name: "metadata/fib_remit/migration_file_control.json", type: "file" },
+            { name: "metadata/fib_remit/migration_batch_control.json", type: "file" },
+            { name: "metadata/fib_kartat/migration_control.json", type: "file" },
+          ]},
+        ],
+      },
+    ],
+    snippets: [
+      {
+        filename: "fib-remit-dms-task.tf — DMS Source + S3 Target",
+        language: "terraform",
+        code: `# DMS Source Endpoint (RDS PostgreSQL)
+resource "aws_dms_endpoint" "source_endpoint_fib_remit" {
+  endpoint_id   = "\${var.project_name}-source-fib-remit"
+  endpoint_type = "source"
+  engine_name   = "postgres"
+
+  server_name   = var.db_instance_address_fib_remit
+  port          = 5432
+  database_name = "fibremit_pgdb"
+  username      = var.fib_remit_db_username
+  password      = var.fib_remit_db_password
+  extra_connection_attributes = "eventsPollInterval=60;captureDDLs=false"
+}
+
+# DMS S3 Target Endpoint — date-partitioned CDC
+resource "aws_dms_s3_endpoint" "target_endpoint_fib_remit" {
+  endpoint_id   = "\${var.project_name}-target-fib-remit"
+  endpoint_type = "target"
+
+  bucket_name             = aws_s3_bucket.fib_remit_data_bucket.bucket
+  service_access_role_arn = aws_iam_role.dms_s3_role.arn
+  add_column_name         = true
+  cdc_path                = "cdc"
+  date_partition_enabled  = true
+  date_partition_sequence = "YYYYMMDD"
+  timestamp_column_name   = "EXTRACT_TIMESTAMP"
+  data_format             = "csv"
+
+  lifecycle {
+    ignore_changes = [csv_no_sup_value, csv_null_value, encoding_type, encryption_mode]
+  }
+}`,
+      },
+      {
+        filename: "monitor.tf — CloudWatch + SNS Alerting",
+        language: "terraform",
+        code: `resource "aws_cloudwatch_log_metric_filter" "dms_error_filter" {
+  name           = "dms-error-filter"
+  log_group_name = "dms-tasks-data-pipeline-dms-instance"
+  pattern        = "?ERROR"
+
+  metric_transformation {
+    name      = "DmsErrorCount"
+    namespace = "DMS/Logs"
+    value     = "1"
+  }
+}
+
+resource "aws_sns_topic" "dms_alerts" {
+  name = "dms-alerts-topic"
+  tags = var.default_tags
+}
+
+resource "aws_sns_topic_subscription" "email_alert" {
+  topic_arn = aws_sns_topic.dms_alerts.arn
+  protocol  = "email"
+  endpoint  = "infra@newroztech.com"
+}
+
+resource "aws_cloudwatch_metric_alarm" "dms_error_alarm" {
+  alarm_name          = "dms-error-alarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 1
+  metric_name         = aws_cloudwatch_log_metric_filter.dms_error_filter.metric_transformation[0].name
+  namespace           = aws_cloudwatch_log_metric_filter.dms_error_filter.metric_transformation[0].namespace
+  period              = 60
+  statistic           = "Sum"
+  threshold           = 1
+  alarm_description   = "Triggers if any ERROR logs are found in DMS logs"
+  alarm_actions       = [aws_sns_topic.dms_alerts.arn]
+  treat_missing_data  = "notBreaching"
+  tags                = var.default_tags
+}`,
+      },
+      {
+        filename: "s3-to-gcp-fib-remit.tf — Storage Transfer Job",
+        language: "terraform",
+        code: `# GCS destination bucket (versioned, uniform access)
+resource "google_storage_bucket" "destination_bucket_fib_remit" {
+  name     = var.gcs_bucket_name
+  location = var.region
+  project  = var.project_id
+
+  versioning { enabled = true }
+  force_destroy               = true
+  uniform_bucket_level_access = true
+}
+
+# Storage Transfer: S3 public/ → GCS public/
+resource "google_storage_transfer_job" "s3_to_gcs_full_load_and_cdc_fib_remit" {
+  description = "sync of full load files from S3 to GCS and then CDC files"
+  project     = var.project_id
+
+  transfer_spec {
+    aws_s3_data_source {
+      bucket_name = var.s3_source_bucket
+      path        = "public/"
+      aws_access_key {
+        access_key_id     = var.aws_access_key_id
+        secret_access_key = var.aws_secret_access_key
+      }
+    }
+    gcs_data_sink {
+      bucket_name = google_storage_bucket.destination_bucket_fib_remit.name
+      path        = "public/"
+    }
+    transfer_options {
+      overwrite_objects_already_existing_in_sink = true
+      delete_objects_from_source_after_transfer  = false
+      overwrite_when                             = "DIFFERENT"
+      delete_objects_unique_in_sink              = true
+    }
+  }
+  notification_config {
+    pubsub_topic   = google_pubsub_topic.transfer_notifications_fib_remit.id
+    payload_format = "JSON"
+  }
+}`,
+      },
+      {
+        filename: "big-query-fib-remit.tf — BigQuery Dataset + Control Tables",
+        language: "terraform",
+        code: `resource "google_bigquery_dataset" "main_dataset_fib_remit" {
+  dataset_id    = var.bigquery_dataset_name
+  friendly_name = "Data Warehouse"
+  location      = var.region
+  labels        = local.labels.fib_remit
+
+  access { role = "OWNER"; user_by_email = google_service_account.pipeline_sa.email }
+  access { role = "READER"; special_group = "projectReaders" }
+  access { role = "WRITER"; special_group = "projectWriters" }
+}
+
+# Migration control table — clustered for query performance
+resource "google_bigquery_table" "migration_control_fib_remit" {
+  dataset_id          = google_bigquery_dataset.main_dataset_fib_remit.dataset_id
+  table_id            = "_migration_control"
+  deletion_protection = false
+  schema              = file("\${path.module}/schemas/metadata/fib_remit/migration_control.json")
+  clustering          = ["migration_status", "table_name"]
+}
+
+# File-level tracking table
+resource "google_bigquery_table" "migration_file_control_fib_remit" {
+  dataset_id = google_bigquery_dataset.main_dataset_fib_remit.dataset_id
+  table_id   = "_migration_file_control"
+  schema     = file("\${path.module}/schemas/metadata/fib_remit/migration_file_control.json")
+  clustering = ["table_name", "processing_status", "batch_id"]
+}
+
+# Batch-level tracking table
+resource "google_bigquery_table" "migration_batch_control_fib_remit" {
+  dataset_id = google_bigquery_dataset.main_dataset_fib_remit.dataset_id
+  table_id   = "_migration_batch_control"
+  schema     = file("\${path.module}/schemas/metadata/fib_remit/migration_batch_control.json")
+}`,
+      },
+      {
+        filename: "functions/migration-fib-remit/main.go — Cloud Function Entry",
+        language: "go",
+        code: `package fibremit
+
+import (
+  "context"
+  "fmt"
+  "log"
+  "net/http"
+  "os"
+  "strings"
+  "time"
+
+  "cloud.google.com/go/bigquery"
+  "cloud.google.com/go/storage"
+  "github.com/GoogleCloudPlatform/functions-framework-go/functions"
+)
+
+var (
+  projectID    = os.Getenv("PROJECT_ID")
+  datasetID    = os.Getenv("DATASET_ID")
+  sourceBucket = os.Getenv("SOURCE_BUCKET")
+)
+
+func init() { functions.HTTP("Main", main) }
+
+func main(w http.ResponseWriter, r *http.Request) {
+  ctx := context.Background()
+  overallStartTime := time.Now()
+
+  log.Println("Starting multi-table migration with parallel-safe idempotency")
+
+  bqClient, _ := bigquery.NewClient(ctx, projectID)
+  defer bqClient.Close()
+  storageClient, _ := storage.NewClient(ctx)
+  defer storageClient.Close()
+
+  alertManager := NewAlertManager(ctx, bqClient)
+  migrationConfig := getDefaultMigrationConfig()
+
+  // Allow table filter via query param: ?tables=users,orders
+  if tableParam := r.URL.Query().Get("tables"); tableParam != "" {
+    requested := strings.Split(tableParam, ",")
+    var filtered []TableConfig
+    for _, name := range requested {
+      for _, cfg := range migrationConfig.Tables {
+        if cfg.TableName == strings.TrimSpace(name) {
+          filtered = append(filtered, cfg)
+        }
+      }
+    }
+    if len(filtered) > 0 { migrationConfig.Tables = filtered }
+  }
+
+  if r.URL.Query().Get("parallel") == "true" {
+    migrationConfig.Parallel = true
+  }
+
+  _ = alertManager
+  _ = overallStartTime
+  fmt.Fprintf(w, "Migration started for %d tables", len(migrationConfig.Tables))
+}`,
+      },
+      {
+        filename: "start_dms_task.py — Lambda Task Control",
+        language: "python",
+        code: `import boto3
+import os
+
+dms_client = boto3.client('dms')
+
+def lambda_handler(event, context):
+    task_arn = os.environ['DMS_TASK_ARN']
+    try:
+        response = dms_client.start_replication_task(
+            ReplicationTaskArn=task_arn,
+            StartReplicationTaskType='resume-processing'
+        )
+        print(f"Started DMS task: {task_arn}")
+        return {'statusCode': 200, 'body': f"Started DMS task: {task_arn}"}
+    except Exception as e:
+        print(f"Error starting DMS task: {e}")
+        return {'statusCode': 500, 'body': f"Error: {e}"}`,
       },
     ],
   },
