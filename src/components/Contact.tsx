@@ -8,15 +8,42 @@ export default function Contact() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 });
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Replace with your form backend (Formspree, EmailJS, etc.)
-    setSent(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/mahmudarif1175@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          _subject: `Portfolio message from ${form.name}`,
+        }),
+      });
+      const data = await res.json();
+      if (data.success === "true" || data.success === true) {
+        setSent(true);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Failed to send. Please email me directly at mahmudarif1175@gmail.com");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,10 +71,10 @@ export default function Contact() {
             className="flex flex-col gap-6"
           >
             {[
-              { icon: <FiMail className="text-sky-400 text-xl" />, label: "Email", value: "mahmud@newroz.iq", href: "mailto:mahmud@newroz.iq" },
-              { icon: <FiMapPin className="text-indigo-400 text-xl" />, label: "Location", value: "Kurdistan, Iraq", href: "#" },
-              { icon: <FiLinkedin className="text-violet-400 text-xl" />, label: "LinkedIn", value: "linkedin.com/in/mahmud", href: "https://linkedin.com/in/mahmud" },
-              { icon: <FiGithub className="text-emerald-400 text-xl" />, label: "GitHub", value: "github.com/mahmud", href: "https://github.com/mahmud" },
+                          { icon: <FiMail className="text-sky-400 text-xl" />, label: "Email", value: "mahmudarif1175@gmail.com", href: "mailto:mahmudarif1175@gmail.com" },
+              { icon: <FiMapPin className="text-indigo-400 text-xl" />, label: "Location", value: "Dhaka, Bangladesh", href: "#" },
+              { icon: <FiLinkedin className="text-violet-400 text-xl" />, label: "LinkedIn", value: "linkedin.com/in/arif-mahmud", href: "https://www.linkedin.com/in/arif-mahmud-03611a138/" },
+              { icon: <FiGithub className="text-emerald-400 text-xl" />, label: "GitHub", value: "github.com/mahmud-arif", href: "https://github.com/mahmud-arif" },
             ].map((item) => (
               <a
                 key={item.label}
@@ -118,12 +145,28 @@ export default function Contact() {
                     className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-slate-200 text-sm placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition-colors resize-none"
                   />
                 </div>
+                {error && (
+                  <p className="text-red-400 text-sm text-center">{error}</p>
+                )}
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40"
+                  disabled={loading}
+                  className="flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-400 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-sky-500/20 hover:shadow-sky-500/40"
                 >
-                  <FiSend />
-                  Send Message
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <FiSend />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             )}
