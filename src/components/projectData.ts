@@ -62,30 +62,87 @@ export const projectDetails: Record<string, ProjectDetail> = {
         },
       ],
     },
-    networkDiagram: {
-      viewBox: "0 0 860 470",
-      nodes: [
-        { id: "cf",   label: "Cloudflare",      sublabel: "DNS + Proxy",       color: "orange",  icon: "🌐", x: 215, y: 55  },
-        { id: "acm",  label: "ACM / TLS",       sublabel: "Certificate",       color: "amber",   icon: "🔒", x: 490, y: 55  },
-        { id: "alb",  label: "Public ALB",      sublabel: "HTTP → HTTPS",      color: "sky",     icon: "⚖️", x: 350, y: 175 },
-        { id: "ec2",  label: "EC2 t3.medium",   sublabel: "Private Subnet",    color: "violet",  icon: "🖥️", x: 215, y: 295 },
-        { id: "rds",  label: "RDS PostgreSQL",  sublabel: "DB Subnet / gp3",   color: "emerald", icon: "🗄️", x: 90,  y: 415 },
-        { id: "sqs",  label: "SQS / SNS",       sublabel: "Event Bus + DLQ",   color: "amber",   icon: "📨", x: 295, y: 415 },
-        { id: "s3",   label: "S3 Buckets",      sublabel: "Assets + Env",      color: "rose",    icon: "🪣", x: 490, y: 415 },
-        { id: "cd",   label: "CodeDeploy",      sublabel: "Blue / Green",      color: "sky",     icon: "🚀", x: 695, y: 295 },
-        { id: "ecr",  label: "ECR",             sublabel: "Docker Images",     color: "teal",    icon: "📦", x: 695, y: 415 },
-      ],
-      edges: [
-        { from: "cf",  to: "alb",  label: "HTTPS" },
-        { from: "acm", to: "alb",  label: "TLS" },
-        { from: "alb", to: "ec2",  label: ":80" },
-        { from: "ec2", to: "rds",  label: "pg:5432" },
-        { from: "ec2", to: "sqs",  label: "publish" },
-        { from: "ec2", to: "s3",   label: "assets",  dashed: true },
-        { from: "cd",  to: "ec2",  label: "deploy" },
-        { from: "ecr", to: "ec2",  label: "pull",    dashed: true },
-      ],
-    },
+    networkDiagrams: [
+      {
+        title: "Platform Infrastructure",
+        viewBox: "0 0 860 470",
+        nodes: [
+          { id: "cf",   label: "Cloudflare",      sublabel: "DNS + Proxy",       color: "orange",  icon: "🌐", x: 215, y: 55  },
+          { id: "acm",  label: "ACM / TLS",       sublabel: "Certificate",       color: "amber",   icon: "🔒", x: 490, y: 55  },
+          { id: "alb",  label: "Public ALB",      sublabel: "HTTP → HTTPS",      color: "sky",     icon: "⚖️", x: 350, y: 175 },
+          { id: "ec2",  label: "EC2 t3.medium",   sublabel: "Private Subnet",    color: "violet",  icon: "🖥️", x: 215, y: 295 },
+          { id: "rds",  label: "RDS PostgreSQL",  sublabel: "DB Subnet / gp3",   color: "emerald", icon: "🗄️", x: 90,  y: 415 },
+          { id: "sqs",  label: "SQS / SNS",       sublabel: "Event Bus + DLQ",   color: "amber",   icon: "📨", x: 295, y: 415 },
+          { id: "s3",   label: "S3 Buckets",      sublabel: "Assets + Env",      color: "rose",    icon: "🪣", x: 490, y: 415 },
+          { id: "cd",   label: "CodeDeploy",      sublabel: "Blue / Green",      color: "sky",     icon: "🚀", x: 695, y: 295 },
+          { id: "ecr",  label: "ECR",             sublabel: "Docker Images",     color: "teal",    icon: "📦", x: 695, y: 415 },
+        ],
+        edges: [
+          { from: "cf",  to: "alb",  label: "HTTPS" },
+          { from: "acm", to: "alb",  label: "TLS" },
+          { from: "alb", to: "ec2",  label: ":80" },
+          { from: "ec2", to: "rds",  label: "pg:5432" },
+          { from: "ec2", to: "sqs",  label: "publish" },
+          { from: "ec2", to: "s3",   label: "assets",  dashed: true },
+          { from: "cd",  to: "ec2",  label: "deploy" },
+          { from: "ecr", to: "ec2",  label: "pull",    dashed: true },
+        ],
+      },
+      {
+        title: "CodeDeploy — CI/CD Flow",
+        viewBox: "0 0 960 530",
+        nodes: [
+          // Row 1 — Source & Build
+          { id: "repo",  label: "Service Repos",      sublabel: "git push · repo_dispatch", color: "teal",    icon: "📁", x: 110, y: 65  },
+          { id: "ci",    label: "GitHub CI",          sublabel: "Build · Test · Push ECR",  color: "slate",   icon: "⚙️", x: 370, y: 65  },
+          { id: "ecr2",  label: "ECR Registry",       sublabel: "hakim-backend/frontend/*",  color: "teal",    icon: "📦", x: 630, y: 65  },
+          // Row 2 — Deploy trigger & artifacts
+          { id: "gha",   label: "GHA Deploy",         sublabel: "infra-compose · pkg zip",  color: "rose",    icon: "🚀", x: 110, y: 185 },
+          { id: "s3d",   label: "S3 Deploy Bucket",   sublabel: "deploy.zip per svc/env",   color: "rose",    icon: "🪣", x: 370, y: 185 },
+          { id: "s3e",   label: "S3 Envs Bucket",     sublabel: ".env per service/env",     color: "amber",   icon: "🔑", x: 630, y: 185 },
+          // Row 3 — AWS CodeDeploy + EC2 agent + CloudWatch
+          { id: "cd2",   label: "AWS CodeDeploy",     sublabel: "App + Deployment Group",   color: "sky",     icon: "📡", x: 110, y: 300 },
+          { id: "ec2",   label: "EC2 t3.medium",      sublabel: "Private subnet · Agent",   color: "violet",  icon: "🖥️", x: 370, y: 300 },
+          { id: "cw",    label: "CloudWatch Logs",    sublabel: "awslogs driver · 30d",     color: "amber",   icon: "📊", x: 630, y: 300 },
+          // Row 4 — Lifecycle hooks → nginx
+          { id: "bi",    label: "BeforeInstall",      sublabel: "mkdir + docker start",     color: "slate",   icon: "🔧", x: 110, y: 405 },
+          { id: "ai",    label: "AfterInstall",       sublabel: "s3 cp .env + docker pull", color: "slate",   icon: "⬇️", x: 370, y: 405 },
+          { id: "as",    label: "ApplicationStart",   sublabel: "alembic + compose up",     color: "emerald", icon: "▶️", x: 630, y: 405 },
+          { id: "ngx",   label: "nginx-proxy",        sublabel: "reverse proxy · :80",      color: "sky",     icon: "🌐", x: 870, y: 405 },
+          // Row 5 — Running containers + data
+          { id: "be",    label: "Backend Svcs (5×)",  sublabel: ":8000-8004 containers",    color: "violet",  icon: "⚙️", x: 310, y: 490 },
+          { id: "fe",    label: "Frontend (3× portals)",sublabel: "admin · b2b · svc-ctr",  color: "sky",     icon: "🖥️", x: 580, y: 490 },
+          { id: "rds2",  label: "RDS PostgreSQL",     sublabel: "pg:5432 · DB subnet",      color: "emerald", icon: "🗄️", x: 820, y: 490 },
+        ],
+        edges: [
+          // Source → CI → ECR
+          { from: "repo",  to: "ci",   label: "git push" },
+          { from: "ci",    to: "ecr2", label: "push image" },
+          // CI triggers deploy workflow
+          { from: "ci",    to: "gha",  label: "dispatch",    dashed: true },
+          // Deploy packaging
+          { from: "gha",   to: "s3d",  label: "pkg zip" },
+          { from: "s3d",   to: "cd2",  label: "s3-location" },
+          // CodeDeploy → EC2
+          { from: "cd2",   to: "ec2",  label: "deploy" },
+          // EC2 runs lifecycle hooks
+          { from: "ec2",   to: "bi",   label: "run hooks" },
+          { from: "bi",    to: "ai" },
+          // AfterInstall pulls env + image
+          { from: "s3e",   to: "ai",   label: ".env",        dashed: true },
+          { from: "ecr2",  to: "ai",   label: "pull",        dashed: true },
+          { from: "ai",    to: "as" },
+          { from: "as",    to: "ngx",  label: "reload" },
+          // nginx routes to containers
+          { from: "ngx",   to: "be",   label: ":80" },
+          { from: "ngx",   to: "fe",   label: ":80" },
+          // Containers → data
+          { from: "be",    to: "rds2", label: "pg:5432" },
+          { from: "be",    to: "cw",   label: "logs",        dashed: true },
+          { from: "fe",    to: "cw",   label: "logs",        dashed: true },
+        ],
+      },
+    ],
     repoStructure: [
       {
         name: "hakim-infra/", type: "folder", children: [
