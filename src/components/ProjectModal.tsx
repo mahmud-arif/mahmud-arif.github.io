@@ -32,8 +32,8 @@ export interface NetworkNode {
   sublabel?: string;
   color: "sky" | "violet" | "emerald" | "amber" | "rose" | "orange" | "teal" | "slate";
   icon?: string;
-  row: number;
-  col: number;
+  x: number;  // center x in viewBox
+  y: number;  // center y in viewBox
 }
 
 export interface NetworkEdge {
@@ -46,7 +46,7 @@ export interface NetworkEdge {
 export interface NetworkDiagram {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
-  cols: number;
+  viewBox: string; // e.g. "0 0 860 460"
 }
 
 export interface ProjectDetail {
@@ -126,120 +126,155 @@ function HLDDiagram({ hld }: { hld: HLD }) {
   );
 }
 
-const nodeColors: Record<string, { border: string; bg: string; text: string; dot: string }> = {
-  sky:     { border: "border-sky-500/50",     bg: "bg-sky-500/10",     text: "text-sky-300",     dot: "bg-sky-400" },
-  violet:  { border: "border-violet-500/50",  bg: "bg-violet-500/10",  text: "text-violet-300",  dot: "bg-violet-400" },
-  emerald: { border: "border-emerald-500/50", bg: "bg-emerald-500/10", text: "text-emerald-300", dot: "bg-emerald-400" },
-  amber:   { border: "border-amber-500/50",   bg: "bg-amber-500/10",   text: "text-amber-300",   dot: "bg-amber-400" },
-  rose:    { border: "border-rose-500/50",    bg: "bg-rose-500/10",    text: "text-rose-300",    dot: "bg-rose-400" },
-  orange:  { border: "border-orange-500/50",  bg: "bg-orange-500/10",  text: "text-orange-300",  dot: "bg-orange-400" },
-  teal:    { border: "border-teal-500/50",    bg: "bg-teal-500/10",    text: "text-teal-300",    dot: "bg-teal-400" },
-  slate:   { border: "border-slate-500/50",   bg: "bg-slate-500/10",   text: "text-slate-300",   dot: "bg-slate-400" },
+const NW = 148;
+const NH = 64;
+const HW = NW / 2;
+const HH = NH / 2;
+
+const SVG_C: Record<string, { fill: string; stroke: string; label: string; sub: string }> = {
+  sky:     { fill: "rgba(14,165,233,0.14)",  stroke: "#0ea5e9", label: "#7dd3fc", sub: "#475569" },
+  violet:  { fill: "rgba(139,92,246,0.14)",  stroke: "#8b5cf6", label: "#c4b5fd", sub: "#475569" },
+  emerald: { fill: "rgba(16,185,129,0.14)",  stroke: "#10b981", label: "#6ee7b7", sub: "#475569" },
+  amber:   { fill: "rgba(245,158,11,0.14)",  stroke: "#f59e0b", label: "#fcd34d", sub: "#475569" },
+  rose:    { fill: "rgba(244,63,94,0.14)",   stroke: "#f43f5e", label: "#fda4af", sub: "#475569" },
+  orange:  { fill: "rgba(249,115,22,0.14)",  stroke: "#f97316", label: "#fdba74", sub: "#475569" },
+  teal:    { fill: "rgba(20,184,166,0.14)",  stroke: "#14b8a6", label: "#5eead4", sub: "#475569" },
+  slate:   { fill: "rgba(100,116,139,0.14)", stroke: "#64748b", label: "#cbd5e1", sub: "#475569" },
 };
 
+function edgePt(cx: number, cy: number, tx: number, ty: number) {
+  const dx = tx - cx, dy = ty - cy;
+  if (!dx && !dy) return { x: cx, y: cy };
+  const s = Math.min(
+    Math.abs(dx) > 0.01 ? HW / Math.abs(dx) : Infinity,
+    Math.abs(dy) > 0.01 ? HH / Math.abs(dy) : Infinity,
+  );
+  return { x: cx + dx * s, y: cy + dy * s };
+}
+
 function NetworkDiagramView({ diagram }: { diagram: NetworkDiagram }) {
-  const rows = Math.max(...diagram.nodes.map((n) => n.row)) + 1;
+  const parts = diagram.viewBox.split(" ");
+  const vw = Number(parts[2]);
+  const vh = Number(parts[3]);
+  const nodeMap = new Map(diagram.nodes.map((n) => [n.id, n]));
 
   return (
     <div className="p-6 border-b border-white/5">
-      <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-5 flex items-center gap-2">
+      <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-4 flex items-center gap-2">
         <FiShare2 className="text-sky-400" />
         Network Diagram
       </h3>
-      <div className="overflow-x-auto">
-        <div className="min-w-[520px]">
-          {Array.from({ length: rows }, (_, rowIdx) => {
-            const rowNodes = diagram.nodes.filter((n) => n.row === rowIdx);
-            const maxCols = diagram.cols;
+      <div className="overflow-x-auto rounded-xl bg-[#040810] border border-white/5 p-3">
+        <svg
+          viewBox={diagram.viewBox}
+          className="w-full h-auto"
+          style={{ minWidth: 480, display: "block" }}
+        >
+          <defs>
+            {/* dot grid background */}
+            <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="0.8" fill="#0f1d30" />
+            </pattern>
+            {/* arrowhead */}
+            <marker id="ah" viewBox="0 0 10 8" markerWidth="10" markerHeight="8"
+              refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0 0 L 10 4 L 0 8 Z" fill="#475569" />
+            </marker>
+            <marker id="ahd" viewBox="0 0 10 8" markerWidth="10" markerHeight="8"
+              refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0 0 L 10 4 L 0 8 Z" fill="#2d3f55" />
+            </marker>
+          </defs>
+
+          {/* background */}
+          <rect width={vw} height={vh} fill="url(#dots)" />
+
+          {/* edges — drawn first so nodes sit on top */}
+          {diagram.edges.map((edge, i) => {
+            const fn = nodeMap.get(edge.from);
+            const tn = nodeMap.get(edge.to);
+            if (!fn || !tn) return null;
+            const p1 = edgePt(fn.x, fn.y, tn.x, tn.y);
+            const p2 = edgePt(tn.x, tn.y, fn.x, fn.y);
+            // pull endpoint back 6px so arrowhead tip sits just outside box
+            const dx = tn.x - fn.x, dy = tn.y - fn.y;
+            const len = Math.sqrt(dx * dx + dy * dy);
+            const p2adj = len > 0
+              ? { x: p2.x + (dx / len) * 6, y: p2.y + (dy / len) * 6 }
+              : p2;
+            const mx = (p1.x + p2adj.x) / 2;
+            const my = (p1.y + p2adj.y) / 2;
+            const lw = edge.label ? Math.max(edge.label.length * 6 + 8, 28) : 0;
             return (
-              <div key={rowIdx}>
-                {/* Row of nodes */}
-                <div
-                  className="grid gap-3"
-                  style={{ gridTemplateColumns: `repeat(${maxCols}, 1fr)` }}
-                >
-                  {Array.from({ length: maxCols }, (_, colIdx) => {
-                    const node = rowNodes.find((n) => n.col === colIdx);
-                    if (!node) return <div key={colIdx} />;
-                    const c = nodeColors[node.color] ?? nodeColors.slate;
-                    return (
-                      <motion.div
-                        key={node.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: rowIdx * 0.08 + colIdx * 0.04 }}
-                        className={`relative rounded-xl border ${c.border} ${c.bg} px-3 py-2.5 text-center`}
-                      >
-                        {node.icon && (
-                          <div className="text-lg mb-1">{node.icon}</div>
-                        )}
-                        <p className={`text-xs font-semibold ${c.text} leading-tight`}>{node.label}</p>
-                        {node.sublabel && (
-                          <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">{node.sublabel}</p>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* Connectors to next row */}
-                {rowIdx < rows - 1 && (() => {
-                  const edges = diagram.edges.filter((e) => {
-                    const fromNode = diagram.nodes.find((n) => n.id === e.from);
-                    const toNode = diagram.nodes.find((n) => n.id === e.to);
-                    return fromNode?.row === rowIdx && toNode?.row === rowIdx + 1;
-                  });
-
-                  if (edges.length === 0) return null;
-
-                  return (
-                    <div className="relative flex justify-center py-2 gap-4 flex-wrap">
-                      {edges.map((edge, ei) => {
-                        const fromNode = diagram.nodes.find((n) => n.id === edge.from);
-                        const toNode = diagram.nodes.find((n) => n.id === edge.to);
-                        if (!fromNode || !toNode) return null;
-                        return (
-                          <div key={ei} className="flex flex-col items-center">
-                            <div className={`w-px h-5 ${edge.dashed ? "border-l border-dashed border-slate-600" : "bg-slate-600"}`} />
-                            <div className="w-1.5 h-1.5 rotate-45 border-r border-b border-slate-500 -mt-1" />
-                            {edge.label && (
-                              <span className="text-[10px] text-slate-500 mt-0.5 whitespace-nowrap">{edge.label}</span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })()}
-              </div>
+              <g key={i}>
+                <line
+                  x1={p1.x} y1={p1.y} x2={p2adj.x} y2={p2adj.y}
+                  stroke={edge.dashed ? "#2d3f55" : "#334155"}
+                  strokeWidth={1.5}
+                  strokeDasharray={edge.dashed ? "6 4" : undefined}
+                  markerEnd={edge.dashed ? "url(#ahd)" : "url(#ah)"}
+                />
+                {edge.label && (
+                  <g>
+                    <rect
+                      x={mx - lw / 2} y={my - 9}
+                      width={lw} height={16} rx={4}
+                      fill="#070d1a" stroke="#1e293b" strokeWidth={0.8}
+                    />
+                    <text
+                      x={mx} y={my + 3.5}
+                      textAnchor="middle"
+                      fill="#64748b"
+                      fontSize={9}
+                      fontFamily="ui-monospace, monospace"
+                    >{edge.label}</text>
+                  </g>
+                )}
+              </g>
             );
           })}
 
-          {/* Lateral edges legend */}
-          {diagram.edges.filter((e) => {
-            const f = diagram.nodes.find((n) => n.id === e.from);
-            const t = diagram.nodes.find((n) => n.id === e.to);
-            return f && t && f.row === t.row;
-          }).length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {diagram.edges
-                .filter((e) => {
-                  const f = diagram.nodes.find((n) => n.id === e.from);
-                  const t = diagram.nodes.find((n) => n.id === e.to);
-                  return f && t && f.row === t.row;
-                })
-                .map((e, i) => {
-                  const f = diagram.nodes.find((n) => n.id === e.from);
-                  const t = diagram.nodes.find((n) => n.id === e.to);
-                  return (
-                    <span key={i} className="text-[10px] text-slate-500 bg-white/5 border border-white/5 rounded-lg px-2 py-1">
-                      {f?.label} → {t?.label}{e.label ? ` (${e.label})` : ""}
-                    </span>
-                  );
-                })}
-            </div>
-          )}
-        </div>
+          {/* nodes */}
+          {diagram.nodes.map((node) => {
+            const c = SVG_C[node.color] ?? SVG_C.slate;
+            const nx = node.x - HW;
+            const ny = node.y - HH;
+            return (
+              <g key={node.id}>
+                {/* shadow */}
+                <rect x={nx + 2} y={ny + 3} width={NW} height={NH} rx={9} fill="rgba(0,0,0,0.35)" />
+                {/* box */}
+                <rect x={nx} y={ny} width={NW} height={NH} rx={9}
+                  fill={c.fill} stroke={c.stroke} strokeWidth={1.5} />
+                {/* icon */}
+                {node.icon && (
+                  <text x={node.x} y={ny + 19} textAnchor="middle" fontSize={13}>{node.icon}</text>
+                )}
+                {/* label */}
+                <text
+                  x={node.x}
+                  y={node.icon ? ny + 37 : (node.sublabel ? ny + 30 : ny + 36)}
+                  textAnchor="middle"
+                  fill={c.label}
+                  fontSize={11}
+                  fontWeight="600"
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >{node.label}</text>
+                {/* sublabel */}
+                {node.sublabel && (
+                  <text
+                    x={node.x}
+                    y={node.icon ? ny + 51 : ny + 47}
+                    textAnchor="middle"
+                    fill={c.sub}
+                    fontSize={8.5}
+                    fontFamily="system-ui, -apple-system, sans-serif"
+                  >{node.sublabel}</text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
       </div>
     </div>
   );
