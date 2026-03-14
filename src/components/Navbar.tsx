@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiDownload } from "react-icons/fi";
-import { FaTerminal } from "react-icons/fa";
+import Image from "next/image";
 
 const links = [
   { href: "#about", label: "About" },
@@ -30,8 +30,8 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="#hero" className="flex items-center gap-2 text-sky-400 font-bold text-xl">
-          <FaTerminal className="text-sky-400" />
+        <a href="#hero" className="flex items-center gap-2 font-bold text-xl">
+          <Image src="/logo.svg" alt="Mahmud logo" width={32} height={32} className="rounded-lg" />
           <span className="text-white">mahmud</span>
           <span className="text-sky-400">.devops</span>
         </a>
