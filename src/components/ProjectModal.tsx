@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiFolder, FiFile, FiChevronRight, FiLayers } from "react-icons/fi";
+import { FiX, FiFolder, FiFile, FiChevronRight, FiLayers, FiShare2 } from "react-icons/fi";
 
 export interface FileNode {
   name: string;
@@ -26,10 +26,34 @@ export interface HLD {
   layers: HLDLayer[];
 }
 
+export interface NetworkNode {
+  id: string;
+  label: string;
+  sublabel?: string;
+  color: "sky" | "violet" | "emerald" | "amber" | "rose" | "orange" | "teal" | "slate";
+  icon?: string;
+  row: number;
+  col: number;
+}
+
+export interface NetworkEdge {
+  from: string;
+  to: string;
+  label?: string;
+  dashed?: boolean;
+}
+
+export interface NetworkDiagram {
+  nodes: NetworkNode[];
+  edges: NetworkEdge[];
+  cols: number;
+}
+
 export interface ProjectDetail {
   title: string;
   description: string;
   hld?: HLD;
+  networkDiagram?: NetworkDiagram;
   repoStructure: FileNode[];
   snippets: CodeSnippet[];
   tags: string[];
@@ -102,8 +126,126 @@ function HLDDiagram({ hld }: { hld: HLD }) {
   );
 }
 
-function FileTree({ nodes, depth = 0 }: { nodes: FileNode[]; depth?: number }) {
+const nodeColors: Record<string, { border: string; bg: string; text: string; dot: string }> = {
+  sky:     { border: "border-sky-500/50",     bg: "bg-sky-500/10",     text: "text-sky-300",     dot: "bg-sky-400" },
+  violet:  { border: "border-violet-500/50",  bg: "bg-violet-500/10",  text: "text-violet-300",  dot: "bg-violet-400" },
+  emerald: { border: "border-emerald-500/50", bg: "bg-emerald-500/10", text: "text-emerald-300", dot: "bg-emerald-400" },
+  amber:   { border: "border-amber-500/50",   bg: "bg-amber-500/10",   text: "text-amber-300",   dot: "bg-amber-400" },
+  rose:    { border: "border-rose-500/50",    bg: "bg-rose-500/10",    text: "text-rose-300",    dot: "bg-rose-400" },
+  orange:  { border: "border-orange-500/50",  bg: "bg-orange-500/10",  text: "text-orange-300",  dot: "bg-orange-400" },
+  teal:    { border: "border-teal-500/50",    bg: "bg-teal-500/10",    text: "text-teal-300",    dot: "bg-teal-400" },
+  slate:   { border: "border-slate-500/50",   bg: "bg-slate-500/10",   text: "text-slate-300",   dot: "bg-slate-400" },
+};
+
+function NetworkDiagramView({ diagram }: { diagram: NetworkDiagram }) {
+  const rows = Math.max(...diagram.nodes.map((n) => n.row)) + 1;
+
   return (
+    <div className="p-6 border-b border-white/5">
+      <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-5 flex items-center gap-2">
+        <FiShare2 className="text-sky-400" />
+        Network Diagram
+      </h3>
+      <div className="overflow-x-auto">
+        <div className="min-w-[520px]">
+          {Array.from({ length: rows }, (_, rowIdx) => {
+            const rowNodes = diagram.nodes.filter((n) => n.row === rowIdx);
+            const maxCols = diagram.cols;
+            return (
+              <div key={rowIdx}>
+                {/* Row of nodes */}
+                <div
+                  className="grid gap-3"
+                  style={{ gridTemplateColumns: `repeat(${maxCols}, 1fr)` }}
+                >
+                  {Array.from({ length: maxCols }, (_, colIdx) => {
+                    const node = rowNodes.find((n) => n.col === colIdx);
+                    if (!node) return <div key={colIdx} />;
+                    const c = nodeColors[node.color] ?? nodeColors.slate;
+                    return (
+                      <motion.div
+                        key={node.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: rowIdx * 0.08 + colIdx * 0.04 }}
+                        className={`relative rounded-xl border ${c.border} ${c.bg} px-3 py-2.5 text-center`}
+                      >
+                        {node.icon && (
+                          <div className="text-lg mb-1">{node.icon}</div>
+                        )}
+                        <p className={`text-xs font-semibold ${c.text} leading-tight`}>{node.label}</p>
+                        {node.sublabel && (
+                          <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">{node.sublabel}</p>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Connectors to next row */}
+                {rowIdx < rows - 1 && (() => {
+                  const edges = diagram.edges.filter((e) => {
+                    const fromNode = diagram.nodes.find((n) => n.id === e.from);
+                    const toNode = diagram.nodes.find((n) => n.id === e.to);
+                    return fromNode?.row === rowIdx && toNode?.row === rowIdx + 1;
+                  });
+
+                  if (edges.length === 0) return null;
+
+                  return (
+                    <div className="relative flex justify-center py-2 gap-4 flex-wrap">
+                      {edges.map((edge, ei) => {
+                        const fromNode = diagram.nodes.find((n) => n.id === edge.from);
+                        const toNode = diagram.nodes.find((n) => n.id === edge.to);
+                        if (!fromNode || !toNode) return null;
+                        return (
+                          <div key={ei} className="flex flex-col items-center">
+                            <div className={`w-px h-5 ${edge.dashed ? "border-l border-dashed border-slate-600" : "bg-slate-600"}`} />
+                            <div className="w-1.5 h-1.5 rotate-45 border-r border-b border-slate-500 -mt-1" />
+                            {edge.label && (
+                              <span className="text-[10px] text-slate-500 mt-0.5 whitespace-nowrap">{edge.label}</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </div>
+            );
+          })}
+
+          {/* Lateral edges legend */}
+          {diagram.edges.filter((e) => {
+            const f = diagram.nodes.find((n) => n.id === e.from);
+            const t = diagram.nodes.find((n) => n.id === e.to);
+            return f && t && f.row === t.row;
+          }).length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {diagram.edges
+                .filter((e) => {
+                  const f = diagram.nodes.find((n) => n.id === e.from);
+                  const t = diagram.nodes.find((n) => n.id === e.to);
+                  return f && t && f.row === t.row;
+                })
+                .map((e, i) => {
+                  const f = diagram.nodes.find((n) => n.id === e.from);
+                  const t = diagram.nodes.find((n) => n.id === e.to);
+                  return (
+                    <span key={i} className="text-[10px] text-slate-500 bg-white/5 border border-white/5 rounded-lg px-2 py-1">
+                      {f?.label} → {t?.label}{e.label ? ` (${e.label})` : ""}
+                    </span>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FileTree({ nodes, depth = 0 }: { nodes: FileNode[]; depth?: number }) {  return (
     <ul className="space-y-0.5">
       {nodes.map((node, i) => (
         <li key={i}>
@@ -194,6 +336,9 @@ export default function ProjectModal({ project, onClose }: Props) {
 
             {/* HLD — only when hld data is present */}
             {project.hld && <HLDDiagram hld={project.hld} />}
+
+            {/* Network Diagram */}
+            {project.networkDiagram && <NetworkDiagramView diagram={project.networkDiagram} />}
 
             {/* Body */}
             <div className="grid md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
