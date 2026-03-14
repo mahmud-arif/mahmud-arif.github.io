@@ -954,48 +954,56 @@ jobs:
       },
       {
         title: "EKS Cluster — Internal Architecture",
-        viewBox: "0 0 1040 520",
+        viewBox: "0 0 1040 545",
         nodes: [
           // Row 1 — Control plane, GitOps, Registry, Node Groups
-          { id: "ctrl",  label: "EKS Ctrl Plane",   sublabel: "v1.33 · OIDC · K8s API",  color: "violet",  icon: "☸️", x: 110, y: 65  },
-          { id: "argo2", label: "ArgoCD",            sublabel: "14 Apps · SAML SSO",      color: "rose",    icon: "🐙", x: 380, y: 65  },
-          { id: "ecr2",  label: "ECR",               sublabel: "Cross-acct Registry",     color: "teal",    icon: "📦", x: 680, y: 65  },
-          { id: "ng",    label: "Node Groups ×2",    sublabel: "t3.xlarge · multi-AZ",    color: "slate",   icon: "🖥️", x: 930, y: 65  },
-          // Row 2 — Ingress entry + K8s controllers
-          { id: "alb2",  label: "AWS ALB",           sublabel: "internet-facing · LBC",   color: "sky",     icon: "⚖️", x: 110, y: 210 },
-          { id: "lbc",   label: "AWS LBC",           sublabel: "Ingress Controller",      color: "sky",     icon: "⚖️", x: 380, y: 210 },
-          { id: "crt",   label: "cert-manager",      sublabel: "TLS Automation 1.16.1",   color: "amber",   icon: "🔒", x: 680, y: 210 },
-          { id: "eso",   label: "ext-secrets",       sublabel: "ESO 0.10.5 · IRSA",      color: "amber",   icon: "🔑", x: 930, y: 210 },
-          // Row 3 — App Pods (group A)
-          { id: "fe",    label: "tls-frontend",      sublabel: "Next.js · ns:frontend",   color: "sky",     icon: "🖥️", x: 110, y: 345 },
-          { id: "cms",   label: "tls-cms",           sublabel: "CMS API pod",             color: "violet",  icon: "⚙️", x: 380, y: 345 },
-          { id: "conn",  label: "tls-connect",       sublabel: "Connect svc pod",         color: "violet",  icon: "🔗", x: 680, y: 345 },
-          { id: "lotto", label: "tls-lottomanager",  sublabel: "Lotto Core · EFS-PVC",    color: "violet",  icon: "🎰", x: 930, y: 345 },
-          // Row 4 — App Pods (group B) + Shared data services
-          { id: "rds2",  label: "RDS PostgreSQL",    sublabel: "loto-<ws> · gp3 · AZ",   color: "emerald", icon: "🗄️", x: 100, y: 455 },
-          { id: "usr",   label: "tls-usermanager",   sublabel: "User Service pod",        color: "violet",  icon: "👥", x: 305, y: 455 },
-          { id: "dta",   label: "tls-data-manip",    sublabel: "Data pipeline pod",       color: "violet",  icon: "📊", x: 510, y: 455 },
-          { id: "retl",  label: "tls-retailmanager", sublabel: "Retail API pod",          color: "violet",  icon: "🏪", x: 715, y: 455 },
-          { id: "sm2",   label: "Secrets Manager",   sublabel: "DB creds · IRSA",         color: "amber",   icon: "🔑", x: 935, y: 455 },
+          { id: "ctrl",  label: "EKS Ctrl Plane",   sublabel: "v1.33 · OIDC · K8s API",   color: "violet",  icon: "☸️", x: 110, y: 60  },
+          { id: "argo2", label: "ArgoCD",            sublabel: "14 Apps · SAML SSO",       color: "rose",    icon: "🐙", x: 380, y: 60  },
+          { id: "ecr2",  label: "ECR",               sublabel: "Cross-acct Registry",      color: "teal",    icon: "📦", x: 660, y: 60  },
+          { id: "ng",    label: "Node Groups ×2",    sublabel: "t3.xlarge · multi-AZ",     color: "slate",   icon: "🖥️", x: 930, y: 60  },
+          // Row 2 — AWS controllers & addons
+          { id: "alb2",  label: "AWS ALB",           sublabel: "internet-facing · LBC",    color: "sky",     icon: "⚖️", x: 110, y: 175 },
+          { id: "lbc",   label: "AWS LBC",           sublabel: "Ingress Controller",       color: "sky",     icon: "⚖️", x: 380, y: 175 },
+          { id: "crt",   label: "cert-manager",      sublabel: "TLS Automation 1.16.1",    color: "amber",   icon: "🔒", x: 660, y: 175 },
+          { id: "eso",   label: "ext-secrets",       sublabel: "ESO 0.10.5 · IRSA",       color: "amber",   icon: "🔑", x: 930, y: 175 },
+          // Row 3 — Entry-level pods: frontend (left) | API gateway (right)
+          { id: "fe",    label: "tls-frontend",      sublabel: "Next.js · ns:frontend",    color: "sky",     icon: "🖥️", x: 190, y: 295 },
+          { id: "conn",  label: "tls-connect",       sublabel: "API Gateway · routes svcs",color: "orange",  icon: "🔗", x: 800, y: 295 },
+          // Row 4 — Backend microservices (cms under fe, others under gateway)
+          { id: "cms",   label: "tls-cms",           sublabel: "Frontend Content Mgmt",    color: "sky",     icon: "📝", x: 110, y: 410 },
+          { id: "lotto", label: "tls-lottomanager",  sublabel: "Lotto Core · EFS-PVC",     color: "violet",  icon: "🎰", x: 340, y: 410 },
+          { id: "retl",  label: "tls-retailmanager", sublabel: "Retail API pod",           color: "violet",  icon: "🏪", x: 565, y: 410 },
+          { id: "usr",   label: "tls-usermanager",   sublabel: "User Service pod",         color: "violet",  icon: "👥", x: 790, y: 410 },
+          { id: "dta",   label: "tls-data-manip",    sublabel: "Data pipeline pod",        color: "violet",  icon: "📊", x: 950, y: 410 },
+          // Row 5 — AWS data services
+          { id: "rds2",  label: "RDS PostgreSQL",    sublabel: "loto-<ws> · gp3 · AZ",    color: "emerald", icon: "🗄️", x: 240, y: 495 },
+          { id: "efs2",  label: "Amazon EFS",        sublabel: "PVC · lottomanager",       color: "orange",  icon: "💾", x: 560, y: 495 },
+          { id: "sm2",   label: "Secrets Manager",   sublabel: "DB creds · IRSA",          color: "amber",   icon: "🔑", x: 860, y: 495 },
         ],
         edges: [
           // GitOps & scheduling
           { from: "argo2", to: "ctrl",  label: "sync" },
           { from: "ctrl",  to: "ng",    label: "schedule" },
-          { from: "ecr2",  to: "ng",    label: "pull",       dashed: true },
-          // Ingress & TLS provisioning
+          { from: "ecr2",  to: "ng",    label: "pull",        dashed: true },
+          // Ingress controllers & TLS
           { from: "lbc",   to: "alb2",  label: "provision" },
           { from: "crt",   to: "lbc",   label: "TLS cert" },
           // Secrets sync
-          { from: "eso",   to: "sm2",   label: "IRSA",       dashed: true },
-          // Traffic routing: ALB → pods
+          { from: "eso",   to: "sm2",   label: "IRSA",        dashed: true },
+          // ALB → entry-level pods
           { from: "alb2",  to: "fe",    label: ":443" },
-          { from: "alb2",  to: "lotto", label: ":443" },
-          // Pod → DB connections
-          { from: "fe",    to: "rds2",  label: "pg:5432" },
+          { from: "alb2",  to: "conn",  label: ":443" },
+          // Frontend → CMS (content management)
+          { from: "fe",    to: "cms",   label: "content" },
+          // API Gateway → backend services
+          { from: "conn",  to: "lotto", label: "route" },
+          { from: "conn",  to: "retl",  label: "route" },
+          { from: "conn",  to: "usr",   label: "route" },
+          { from: "conn",  to: "dta",   label: "route" },
+          // Data layer
           { from: "lotto", to: "rds2",  label: "pg:5432" },
           { from: "usr",   to: "rds2",  label: "pg:5432" },
-          { from: "retl",  to: "rds2",  label: "pg:5432" },
+          { from: "lotto", to: "efs2",  label: "PVC",         dashed: true },
         ],
       },
     ],
