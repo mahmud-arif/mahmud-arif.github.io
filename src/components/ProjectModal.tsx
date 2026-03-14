@@ -44,6 +44,7 @@ export interface NetworkEdge {
 }
 
 export interface NetworkDiagram {
+  title?: string;
   nodes: NetworkNode[];
   edges: NetworkEdge[];
   viewBox: string; // e.g. "0 0 860 460"
@@ -54,6 +55,7 @@ export interface ProjectDetail {
   description: string;
   hld?: HLD;
   networkDiagram?: NetworkDiagram;
+  networkDiagrams?: NetworkDiagram[];
   repoStructure: FileNode[];
   snippets: CodeSnippet[];
   tags: string[];
@@ -162,7 +164,7 @@ function NetworkDiagramView({ diagram }: { diagram: NetworkDiagram }) {
     <div className="p-6 border-b border-white/5">
       <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-4 flex items-center gap-2">
         <FiShare2 className="text-sky-400" />
-        Network Diagram
+        {diagram.title ?? "Network Diagram"}
       </h3>
       <div className="overflow-x-auto rounded-xl bg-[#040810] border border-white/5 p-3">
         <svg
@@ -372,8 +374,10 @@ export default function ProjectModal({ project, onClose }: Props) {
             {/* HLD — only when hld data is present */}
             {project.hld && <HLDDiagram hld={project.hld} />}
 
-            {/* Network Diagram */}
-            {project.networkDiagram && <NetworkDiagramView diagram={project.networkDiagram} />}
+            {/* Network Diagram(s) */}
+            {project.networkDiagrams
+              ? project.networkDiagrams.map((d, i) => <NetworkDiagramView key={i} diagram={d} />)
+              : project.networkDiagram && <NetworkDiagramView diagram={project.networkDiagram} />}
 
             {/* Body */}
             <div className="grid md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
