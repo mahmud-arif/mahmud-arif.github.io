@@ -59,7 +59,7 @@ export default function Hero() {
             <span className="text-sky-400 font-semibold">DevOps Engineer</span>
           </p>
           <p className="text-sm md:text-base text-slate-500 mt-1 tracking-wide">
-            Cloud Infrastructure · Platform Engineering
+            Cloud Infrastructure · Platform Engineering · Observability
           </p>
         </motion.div>
 
@@ -70,7 +70,7 @@ export default function Hero() {
           transition={{ delay: 0.4 }}
           className="max-w-xl mx-auto text-slate-400 text-sm md:text-lg leading-relaxed mb-8 md:mb-10 px-2 md:px-0"
         >
-          DevOps Engineer specializing in building scalable infrastructure and reliable platforms, with a strong focus on automation, system reliability, and enabling fast, safe software delivery.
+          I design and run the cloud infrastructure production depends on — Kubernetes, Terraform and GitOps for fast, safe delivery, paired with OpenTelemetry, OpenObserve and Datadog so issues surface as alerts, not outages.
         </motion.p>
 
         {/* CTAs */}

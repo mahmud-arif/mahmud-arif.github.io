@@ -51,8 +51,8 @@ const projects = [
   {
     title: "eSIM Platform Infrastructure",
     description:
-      "Full cloud infrastructure for an eSIM backend — Terraform-provisioned VPCs, EC2, RDS, application properties management, Docker Compose dev environments, and AWS CodeDeploy production deployments.",
-    tags: ["Terraform", "AWS", "Docker Compose", "RDS", "CodeDeploy"],
+      "Full cloud infrastructure for an eSIM backend — Terraform-provisioned VPCs, EC2, RDS, application properties management, Docker Compose dev environments, AWS CodeDeploy production deployments, and OpenTelemetry traces shipped to OpenObserve and Datadog APM.",
+    tags: ["Terraform", "AWS", "Docker Compose", "RDS", "CodeDeploy", "OpenObserve", "OTel"],
     icons: [<SiTerraform key="tf" />, <FiCloud key="aws" />, <SiPostgresql key="pg" />],
     color: "amber",
     category: "Telecom · Cloud",
@@ -60,8 +60,8 @@ const projects = [
   {
     title: "Travluence — Travel Infra",
     description:
-      "Cloud infrastructure provisioning and server management for a travel-tech platform, including network topology design and service deployment automation.",
-    tags: ["Terraform", "AWS", "Linux", "Nginx"],
+      "Cloud infrastructure provisioning and server management for a travel-tech platform, including network topology design, service deployment automation, and OpenObserve-based tracing, log aggregation, alerting and infra monitoring for the booking engine.",
+    tags: ["Terraform", "AWS", "Linux", "Nginx", "OpenObserve"],
     icons: [<SiTerraform key="tf" />, <FiCloud key="aws" />],
     color: "teal",
     category: "Travel Tech",

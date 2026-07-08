@@ -6,8 +6,9 @@ import {
   SiGooglecloud, SiDocker, SiHelm, SiGithubactions, SiPrometheus,
   SiGrafana, SiPostgresql, SiNginx, SiLinux, SiGit,
   SiAnsible, SiJenkins, SiMysql, SiPython, SiGo, SiDatadog,
+  SiOpentelemetry,
 } from "react-icons/si";
-import { FiDatabase, FiCloud, FiTerminal } from "react-icons/fi";
+import { FiDatabase, FiCloud, FiTerminal, FiActivity } from "react-icons/fi";
 
 const categories = [
   {
@@ -41,14 +42,24 @@ const categories = [
     ],
   },
   {
-    name: "CI/CD & Observability",
+    name: "CI/CD",
     color: "emerald",
     skills: [
       { icon: <SiGithubactions />, name: "GitHub Actions" },
       { icon: <SiJenkins />, name: "Jenkins" },
+      { icon: <FiCloud />, name: "AWS CodeDeploy" },
+      { icon: <SiGit />, name: "GitOps" },
+    ],
+  },
+  {
+    name: "Observability",
+    color: "cyan",
+    skills: [
+      { icon: <SiOpentelemetry />, name: "OpenTelemetry" },
+      { icon: <FiActivity />, name: "OpenObserve" },
+      { icon: <SiDatadog />, name: "Datadog APM" },
       { icon: <SiPrometheus />, name: "Prometheus" },
       { icon: <SiGrafana />, name: "Grafana / Loki" },
-      { icon: <SiDatadog />, name: "Datadog" },
     ],
   },
   {
@@ -80,6 +91,7 @@ const colorMap: Record<string, string> = {
   emerald: "border-emerald-500/20 hover:border-emerald-500/50 group-hover:text-emerald-400",
   amber: "border-amber-500/20 hover:border-amber-500/50 group-hover:text-amber-400",
   rose: "border-rose-500/20 hover:border-rose-500/50 group-hover:text-rose-400",
+  cyan: "border-cyan-500/20 hover:border-cyan-500/50 group-hover:text-cyan-400",
 };
 
 const titleColorMap: Record<string, string> = {
@@ -89,6 +101,7 @@ const titleColorMap: Record<string, string> = {
   emerald: "text-emerald-400",
   amber: "text-amber-400",
   rose: "text-rose-400",
+  cyan: "text-cyan-400",
 };
 
 export default function Skills() {

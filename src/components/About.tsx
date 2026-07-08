@@ -1,13 +1,13 @@
 "use client";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
-import { FiServer, FiCloud, FiShield, FiCpu } from "react-icons/fi";
+import { FiServer, FiCloud, FiShield, FiActivity } from "react-icons/fi";
 
 const highlights = [
-  { icon: <FiCloud className="text-sky-400 text-xl" />, text: "Full infrastructure lifecycle — from provisioning to production on AWS EKS, EC2 & Docker" },
-  { icon: <FiServer className="text-indigo-400 text-xl" />, text: "Supporting Hakim, eSIM, Loto & internal data platforms in production" },
-  { icon: <FiShield className="text-emerald-400 text-xl" />, text: "GitOps workflows with ArgoCD, Atlantis & Terraform across multi-environment setups" },
-  { icon: <FiCpu className="text-violet-400 text-xl" />, text: "Strong focus on IaC, automation, platform reliability & observability" },
+  { icon: <FiCloud className="text-sky-400 text-xl" />, text: "Own the full infrastructure lifecycle — from first provision to production on AWS EKS, EC2 & Docker" },
+  { icon: <FiServer className="text-indigo-400 text-xl" />, text: "Run Hakim, eSIM, Loto, Travluence & internal data platforms in production, today" },
+  { icon: <FiShield className="text-emerald-400 text-xl" />, text: "Ship changes safely with GitOps — ArgoCD, Atlantis & Terraform across multi-environment setups" },
+  { icon: <FiActivity className="text-cyan-400 text-xl" />, text: "Catch issues before customers do — OpenTelemetry, OpenObserve & Datadog for tracing, logs and alerting" },
 ];
 
 export default function About() {
@@ -39,25 +39,31 @@ export default function About() {
               <div className="absolute -inset-1 bg-gradient-to-r from-sky-500/20 to-indigo-500/20 rounded-2xl blur-sm" />
               <div className="relative bg-[#0f172a] border border-white/5 rounded-2xl p-8">
                 <p className="text-slate-300 text-base leading-relaxed mb-5">
-                  I&apos;m a <span className="text-sky-400 font-semibold">DevOps Engineer</span> at{" "}
-                  <span className="text-white font-semibold">Newroz Technologies Limited</span>, responsible for
-                  building and operating scalable cloud infrastructure and internal platforms.
+                  I keep production infrastructure reliable, secure and easy to ship to — so product teams
+                  can move fast without breaking things. I&apos;m a{" "}
+                  <span className="text-sky-400 font-semibold">DevOps Engineer</span> at{" "}
+                  <span className="text-white font-semibold">Newroz Technologies Limited</span>, where I own
+                  that end to end: design, build and operate the cloud infrastructure and internal platforms
+                  our products run on.
                 </p>
                 <p className="text-slate-300 text-base leading-relaxed mb-5">
-                  I manage the full infrastructure lifecycle — from provisioning environments
-                  to running production workloads on{" "}
+                  Day to day, that means running workloads on{" "}
                   <span className="text-sky-400 font-medium">Amazon EKS</span>,{" "}
-                  <span className="text-sky-400 font-medium">Docker</span>, and{" "}
-                  <span className="text-sky-400 font-medium">Amazon EC2</span>.
+                  <span className="text-sky-400 font-medium">Docker</span> and{" "}
+                  <span className="text-sky-400 font-medium">Amazon EC2</span>, codifying it all with{" "}
+                  <span className="text-emerald-400 font-medium">Terraform</span> and GitOps, and closing the
+                  loop with <span className="text-cyan-400 font-medium">OpenTelemetry</span>,{" "}
+                  <span className="text-cyan-400 font-medium">OpenObserve</span> and{" "}
+                  <span className="text-cyan-400 font-medium">Datadog</span> so problems surface as alerts,
+                  not outages.
                 </p>
                 <p className="text-slate-300 text-base leading-relaxed">
-                  My work supports multiple products including{" "}
+                  This work supports{" "}
                   <span className="text-indigo-400">Hakim</span>,{" "}
                   <span className="text-indigo-400">eSIM</span>,{" "}
-                  <span className="text-indigo-400">Loto</span>, and internal data platforms —
-                  with a strong focus on{" "}
-                  <span className="text-emerald-400 font-medium">Infrastructure as Code</span>,
-                  GitOps, automation, and platform reliability.
+                  <span className="text-indigo-400">Loto</span>,{" "}
+                  <span className="text-indigo-400">Travluence</span> and our internal data platforms —
+                  in production, at the same time, with automation and reliability as the constant.
                 </p>
               </div>
             </div>

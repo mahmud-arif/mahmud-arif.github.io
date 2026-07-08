@@ -1,7 +1,10 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiFolder, FiFile, FiChevronRight, FiLayers, FiShare2 } from "react-icons/fi";
+import {
+  FiX, FiFolder, FiFile, FiChevronRight, FiLayers, FiShare2,
+  FiCopy, FiCheck, FiGrid, FiCode,
+} from "react-icons/fi";
 
 export interface FileNode {
   name: string;
@@ -320,20 +323,49 @@ const langColors: Record<string, string> = {
 };
 
 export default function ProjectModal({ project, onClose }: Props) {
+  const [tab, setTab] = useState<"architecture" | "code">("architecture");
+  const [activeSnippet, setActiveSnippet] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  const hasArchitecture = !!(
+    project?.hld ||
+    project?.networkDiagrams?.length ||
+    project?.networkDiagram
+  );
+
   useEffect(() => {
     if (project) {
       document.body.style.overflow = "hidden";
+      setTab(hasArchitecture ? "architecture" : "code");
+      setActiveSnippet(0);
+      setCopied(false);
     } else {
       document.body.style.overflow = "";
     }
     return () => { document.body.style.overflow = ""; };
-  }, [project]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project?.title]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
+
+  const selectSnippet = (i: number) => {
+    setActiveSnippet(i);
+    setCopied(false);
+  };
+
+  const handleCopy = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard unavailable in this context — silently ignore
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -342,7 +374,7 @@ export default function ProjectModal({ project, onClose }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-100 flex items-start justify-center bg-black/70 backdrop-blur-sm p-4 md:p-8 overflow-y-auto"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 md:p-8"
           onClick={onClose}
         >
           <motion.div
@@ -350,11 +382,11 @@ export default function ProjectModal({ project, onClose }: Props) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="relative w-full max-w-5xl bg-[#0d1424] border border-white/10 rounded-2xl shadow-2xl my-auto"
+            className="relative w-full max-w-5xl max-h-[90vh] bg-[#0d1424] border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex items-start justify-between p-6 border-b border-white/5">
+            {/* Header — stays fixed above the scrollable body so Close is always visible */}
+            <div className="shrink-0 flex items-start justify-between p-6 border-b border-white/5">
               <div>
                 <p className={`text-xs font-semibold tracking-widest uppercase mb-1 text-sky-400`}>
                   Project Deep Dive
@@ -371,65 +403,126 @@ export default function ProjectModal({ project, onClose }: Props) {
               </button>
             </div>
 
-            {/* HLD — only when hld data is present */}
-            {project.hld && <HLDDiagram hld={project.hld} />}
-
-            {/* Network Diagram(s) */}
-            {project.networkDiagrams
-              ? project.networkDiagrams.map((d, i) => <NetworkDiagramView key={i} diagram={d} />)
-              : project.networkDiagram && <NetworkDiagramView diagram={project.networkDiagram} />}
-
-            {/* Body */}
-            <div className="grid md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
-              {/* Left: File Structure */}
-              <div className="p-6">
-                <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-4 flex items-center gap-2">
-                  <FiFolder className="text-amber-400" />
-                  Repository Structure
-                </h3>
-                <div className="bg-[#080e1c] rounded-xl border border-white/5 p-4 font-mono text-xs max-h-96 overflow-y-auto">
-                  <FileTree nodes={project.repoStructure} />
-                </div>
-              </div>
-
-              {/* Right: Code Snippets */}
-              <div className="p-6 flex flex-col gap-5">
-                <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase flex items-center gap-2">
-                  <FiFile className="text-sky-400" />
-                  Code Snippets
-                </h3>
-                {project.snippets.map((snippet, i) => (
-                  <div key={i} className="rounded-xl border border-white/5 overflow-hidden">
-                    {/* Tab bar */}
-                    <div className="flex items-center gap-2 bg-[#080e1c] px-4 py-2 border-b border-white/5">
-                      <div className="flex gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                      </div>
-                      <span className={`text-xs font-mono ml-2 ${langColors[snippet.language] ?? "text-slate-400"}`}>
-                        {snippet.filename}
-                      </span>
-                    </div>
-                    <pre className="bg-[#060b18] p-4 text-xs font-mono text-slate-300 overflow-x-auto max-h-64 leading-relaxed whitespace-pre">
-                      {snippet.code.trim()}
-                    </pre>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Footer Tags */}
-            <div className="flex flex-wrap gap-2 p-6 border-t border-white/5">
+            {/* Tags — always visible at a glance, regardless of tab */}
+            <div className="shrink-0 flex flex-wrap gap-1.5 px-6 py-3 border-b border-white/5">
               {project.tags.map((t) => (
-                <span key={t} className="text-xs bg-white/5 text-slate-400 px-3 py-1 rounded-full border border-white/5">
+                <span key={t} className="text-[11px] bg-white/5 text-slate-400 px-2.5 py-1 rounded-full border border-white/5">
                   {t}
                 </span>
               ))}
             </div>
 
+            {/* Section tabs */}
+            {hasArchitecture && (
+              <div className="shrink-0 flex items-center gap-1 px-6 border-b border-white/5">
+                <button
+                  onClick={() => setTab("architecture")}
+                  className={`flex items-center gap-1.5 text-sm font-medium px-3 py-3 border-b-2 -mb-px transition-colors ${
+                    tab === "architecture"
+                      ? "border-sky-400 text-white"
+                      : "border-transparent text-slate-500 hover:text-slate-300"
+                  }`}
+                >
+                  <FiGrid className="text-base" />
+                  Architecture
+                </button>
+                <button
+                  onClick={() => setTab("code")}
+                  className={`flex items-center gap-1.5 text-sm font-medium px-3 py-3 border-b-2 -mb-px transition-colors ${
+                    tab === "code"
+                      ? "border-sky-400 text-white"
+                      : "border-transparent text-slate-500 hover:text-slate-300"
+                  }`}
+                >
+                  <FiCode className="text-base" />
+                  Code
+                </button>
+              </div>
+            )}
+
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto">
+              {tab === "architecture" && hasArchitecture && (
+                <>
+                  {project.hld && <HLDDiagram hld={project.hld} />}
+                  {project.networkDiagrams
+                    ? project.networkDiagrams.map((d, i) => <NetworkDiagramView key={i} diagram={d} />)
+                    : project.networkDiagram && <NetworkDiagramView diagram={project.networkDiagram} />}
+                </>
+              )}
+
+              {tab === "code" && (
+                <div className="grid md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
+                  {/* Left: File Structure */}
+                  <div className="p-6">
+                    <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-4 flex items-center gap-2">
+                      <FiFolder className="text-amber-400" />
+                      Repository Structure
+                    </h3>
+                    <div className="bg-[#080e1c] rounded-xl border border-white/5 p-4 font-mono text-xs max-h-[28rem] overflow-y-auto">
+                      <FileTree nodes={project.repoStructure} />
+                    </div>
+                  </div>
+
+                  {/* Right: Code Snippet viewer — single active file, switched via tabs */}
+                  <div className="p-6 flex flex-col gap-3 min-w-0">
+                    <h3 className="text-xs font-semibold text-slate-500 tracking-widest uppercase flex items-center gap-2">
+                      <FiFile className="text-sky-400" />
+                      Code Snippets
+                    </h3>
+
+                    {/* File tabs */}
+                    <div className="flex items-center gap-1 overflow-x-auto">
+                      {project.snippets.map((snippet, i) => (
+                        <button
+                          key={i}
+                          onClick={() => selectSnippet(i)}
+                          className={`shrink-0 flex items-center gap-1.5 text-xs font-mono px-3 py-1.5 rounded-lg border transition-colors ${
+                            i === activeSnippet
+                              ? "bg-white/10 border-white/15 text-white"
+                              : "bg-transparent border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                          }`}
+                        >
+                          <FiFile className={i === activeSnippet ? (langColors[snippet.language] ?? "text-slate-300") : ""} />
+                          {snippet.filename}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Active snippet */}
+                    {project.snippets[activeSnippet] && (
+                      <div className="rounded-xl border border-white/5 overflow-hidden">
+                        <div className="flex items-center justify-between gap-2 bg-[#080e1c] px-4 py-2 border-b border-white/5">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div className="flex gap-1.5 shrink-0">
+                              <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                            </div>
+                            <span className={`text-xs font-mono truncate ${langColors[project.snippets[activeSnippet].language] ?? "text-slate-400"}`}>
+                              {project.snippets[activeSnippet].filename}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => handleCopy(project.snippets[activeSnippet].code.trim())}
+                            className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 px-2 py-1 rounded-md transition-colors"
+                          >
+                            {copied ? <FiCheck className="text-emerald-400" /> : <FiCopy />}
+                            {copied ? "Copied" : "Copy"}
+                          </button>
+                        </div>
+                        <pre className="bg-[#060b18] p-4 text-xs font-mono text-slate-300 overflow-auto max-h-[28rem] leading-relaxed whitespace-pre">
+                          {project.snippets[activeSnippet].code.trim()}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Mobile sticky close button */}
-            <div className="md:hidden sticky bottom-0 p-4 bg-[#0d1424] border-t border-white/10">
+            <div className="md:hidden shrink-0 p-4 bg-[#0d1424] border-t border-white/10">
               <button
                 onClick={onClose}
                 className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-red-500/20 border border-white/15 hover:border-red-500/30 text-white font-semibold py-3 rounded-xl transition-all duration-200"

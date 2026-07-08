@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Mahmud | DevOps Engineer",
-  description: "Portfolio of Mahmud — Senior DevOps Engineer specializing in Kubernetes, Terraform, ArgoCD, AWS and GCP.",
+  description: "Mahmud — DevOps Engineer building reliable, observable cloud infrastructure with Kubernetes, Terraform, ArgoCD, AWS/GCP, OpenTelemetry, OpenObserve and Datadog.",
   icons: {
     icon: [
       { url: "/logo.svg", type: "image/svg+xml" },
