@@ -4,6 +4,7 @@ import About from "@/components/About";
 import Skills from "@/components/Skills";
 import Observability from "@/components/Observability";
 import Projects from "@/components/Projects";
+import GitHubActivity from "@/components/GitHubActivity";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <Skills />
         <Observability />
         <Projects />
+        <GitHubActivity />
         <Contact />
       </main>
       <Footer />

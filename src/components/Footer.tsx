@@ -29,7 +29,10 @@ export default function Footer() {
 
         {/* Socials */}
         <div className="flex gap-4 text-slate-500 text-xl">
-          <a href="https://github.com/mahmud-arif" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">
+          <a href="https://github.com/arifmahmud-devops" target="_blank" rel="noopener noreferrer" title="GitHub (DevOps)" aria-label="GitHub (DevOps)" className="hover:text-sky-400 transition-colors">
+            <FiGithub />
+          </a>
+          <a href="https://github.com/mahmud-arif" target="_blank" rel="noopener noreferrer" title="GitHub (Personal)" aria-label="GitHub (Personal)" className="hover:text-sky-400 transition-colors">
             <FiGithub />
           </a>
           <a href="https://www.linkedin.com/in/arif-mahmud-03611a138/" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors">

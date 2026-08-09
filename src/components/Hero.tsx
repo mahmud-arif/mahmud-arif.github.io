@@ -107,10 +107,11 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="flex justify-center gap-5 md:gap-6"
+          className="flex flex-wrap justify-center gap-2.5 md:gap-3"
         >
           {[
-            { icon: <FiGithub />, href: "https://github.com/mahmud-arif", label: "GitHub" },
+            { icon: <FiGithub />, href: "https://github.com/arifmahmud-devops", label: "GitHub (DevOps)" },
+            { icon: <FiGithub />, href: "https://github.com/mahmud-arif", label: "GitHub (Personal)" },
             { icon: <FiLinkedin />, href: "https://www.linkedin.com/in/arif-mahmud-03611a138/", label: "LinkedIn" },
             { icon: <FiMail />, href: "mailto:mahmudarif1175@gmail.com", label: "Email" },
           ].map((s) => (
@@ -120,9 +121,10 @@ export default function Hero() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={s.label}
-              className="text-slate-500 hover:text-sky-400 text-2xl transition-colors duration-200 p-2"
+              className="flex items-center gap-1.5 border border-white/10 hover:border-sky-500/50 rounded-full px-3.5 py-2 text-slate-400 hover:text-sky-400 text-sm font-medium transition-colors duration-200"
             >
-              {s.icon}
+              <span className="text-base">{s.icon}</span>
+              {s.label}
             </a>
           ))}
         </motion.div>
