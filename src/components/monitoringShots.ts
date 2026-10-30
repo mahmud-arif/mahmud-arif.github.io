@@ -41,6 +41,68 @@ export interface MonitoringShot {
 
 export const monitoringShots: MonitoringShot[] = [
   {
+    id: "service-map",
+    image: "monitoring/service-map.png",
+    size: { w: 2672, h: 4158 },
+    // Traced over the Mesh traffic graph; faster, denser dots on busier edges.
+    flows: [
+      { label: "internet → gateway", kind: "http", d: "M388,1305 Q600,1270 800,1308", dur: 2.8, dots: 2 },
+      { label: "gateway → booking-engine-go", kind: "http", d: "M868,1280 C920,1200 1060,1040 1292,900", dur: 3.2, dots: 2 },
+      { label: "gateway → keycloak", kind: "http", d: "M876,1315 C1000,1315 1180,1340 1288,1388", dur: 3.6, dots: 1 },
+      { label: "gateway → argocd-server", kind: "http", d: "M910,1360 C1050,1460 1200,1580 1292,1720", dur: 3.6, dots: 1 },
+      { label: "booking-engine-go → valkey", kind: "tcp", d: "M1323,912 L1325,988", dur: 1.2, dots: 1 },
+      { label: "booking-engine-go → fx-exchangerate", kind: "tcp", d: "M1355,882 C1500,895 1650,955 1775,1038", dur: 3.0, dots: 1 },
+      { label: "booking-engine-go → supplier-esimgo", kind: "tcp", d: "M1350,898 C1500,960 1660,1080 1778,1200", dur: 2.4, dots: 2 },
+      { label: "booking-engine-go → rds-postgres", kind: "tcp", d: "M1350,900 C1500,1000 1680,1170 1782,1365", dur: 1.6, dots: 4 },
+      { label: "booking-engine-go → keycloak", kind: "tcp", d: "M1380,1000 C1440,1100 1410,1240 1325,1342", dur: 3.2, dots: 1 },
+      { label: "keycloak → rds-postgres", kind: "tcp", d: "M1360,1392 C1500,1365 1650,1365 1775,1395", dur: 2.6, dots: 1 },
+      { label: "keycloak → unknown", kind: "http", d: "M1420,1408 C1550,1450 1680,1500 1775,1555", dur: 3.6, dots: 1 },
+      { label: "apps → o2c-gateway-collector", kind: "tcp", d: "M1315,1120 C1300,1420 1200,1820 1095,2050", dur: 4.0, dots: 1 },
+      { label: "keycloak → o2c-gateway-collector", kind: "tcp", d: "M1300,1530 C1260,1770 1180,1920 1105,2050", dur: 4.0, dots: 1 },
+    ],
+    dashboard: "Service Map",
+    tab: "Map",
+    label: "Service mesh",
+    question: "Who talks to whom inside the mesh, and which hop is failing?",
+    callouts: [
+      {
+        title: "Mesh at a glance",
+        body: "Gateway traffic, 5xx split into app errors vs Envoy errors, p95 latency, and the share of TCP bytes encrypted with mTLS.",
+        box: { x: 1.2, y: 8.25, w: 97.7, h: 7.75 },
+      },
+      {
+        title: "Mesh traffic graph",
+        body: "Internet → Istio Gateway → services → external dependencies (RDS, supplier APIs), grouped by namespace. Edges are coloured by 5xx rate and marked mTLS or plain text.",
+        box: { x: 1.2, y: 16.5, w: 97.7, h: 38.65 },
+      },
+      {
+        title: "Services: health",
+        body: "Requests/s, 5xx/s and 5xx % for every service in the mesh, side by side.",
+        box: { x: 1.2, y: 55.65, w: 48.5, h: 14.25 },
+      },
+      {
+        title: "Calls between services",
+        body: "Each source → destination edge with its own rate and errors, which pinpoints the failing hop.",
+        box: { x: 50.4, y: 55.65, w: 48.5, h: 14.25 },
+      },
+      {
+        title: "TCP connections (ztunnel)",
+        body: "L4 view for traffic Istio can't see as HTTP (Postgres, Valkey), with throughput and how much of it is mTLS.",
+        box: { x: 1.2, y: 70.4, w: 97.7, h: 14.2 },
+      },
+      {
+        title: "Requests/s & p95 latency per call",
+        body: "Rate and tail latency for each Gateway → service route over time, so a slow route stands out from the rest.",
+        box: { x: 1.2, y: 85.15, w: 97.7, h: 14.2 },
+      },
+    ],
+    built: [
+      "Istio ambient (ztunnel + waypoints), Gateway API",
+      "istio_requests_total / istio_tcp_* metrics",
+      "Custom graph panel built by the dashboard generator",
+    ],
+  },
+  {
     id: "platform",
     image: "monitoring/platform-overview.png",
     dashboard: "Platform Health",
@@ -108,68 +170,6 @@ export const monitoringShots: MonitoringShot[] = [
       "Graviton (arm64) NodePool first, x86 fallback",
       "Spot-first in dev, on-demand in stage/prod",
       "Karpenter's 18k-series instance catalog dropped at scrape",
-    ],
-  },
-  {
-    id: "service-map",
-    image: "monitoring/service-map.png",
-    size: { w: 2672, h: 4158 },
-    // Traced over the Mesh traffic graph; faster, denser dots on busier edges.
-    flows: [
-      { label: "internet → gateway", kind: "http", d: "M388,1305 Q600,1270 800,1308", dur: 2.8, dots: 2 },
-      { label: "gateway → booking-engine-go", kind: "http", d: "M868,1280 C920,1200 1060,1040 1292,900", dur: 3.2, dots: 2 },
-      { label: "gateway → keycloak", kind: "http", d: "M876,1315 C1000,1315 1180,1340 1288,1388", dur: 3.6, dots: 1 },
-      { label: "gateway → argocd-server", kind: "http", d: "M910,1360 C1050,1460 1200,1580 1292,1720", dur: 3.6, dots: 1 },
-      { label: "booking-engine-go → valkey", kind: "tcp", d: "M1323,912 L1325,988", dur: 1.2, dots: 1 },
-      { label: "booking-engine-go → fx-exchangerate", kind: "tcp", d: "M1355,882 C1500,895 1650,955 1775,1038", dur: 3.0, dots: 1 },
-      { label: "booking-engine-go → supplier-esimgo", kind: "tcp", d: "M1350,898 C1500,960 1660,1080 1778,1200", dur: 2.4, dots: 2 },
-      { label: "booking-engine-go → rds-postgres", kind: "tcp", d: "M1350,900 C1500,1000 1680,1170 1782,1365", dur: 1.6, dots: 4 },
-      { label: "booking-engine-go → keycloak", kind: "tcp", d: "M1380,1000 C1440,1100 1410,1240 1325,1342", dur: 3.2, dots: 1 },
-      { label: "keycloak → rds-postgres", kind: "tcp", d: "M1360,1392 C1500,1365 1650,1365 1775,1395", dur: 2.6, dots: 1 },
-      { label: "keycloak → unknown", kind: "http", d: "M1420,1408 C1550,1450 1680,1500 1775,1555", dur: 3.6, dots: 1 },
-      { label: "apps → o2c-gateway-collector", kind: "tcp", d: "M1315,1120 C1300,1420 1200,1820 1095,2050", dur: 4.0, dots: 1 },
-      { label: "keycloak → o2c-gateway-collector", kind: "tcp", d: "M1300,1530 C1260,1770 1180,1920 1105,2050", dur: 4.0, dots: 1 },
-    ],
-    dashboard: "Service Map",
-    tab: "Map",
-    label: "Service mesh",
-    question: "Who talks to whom inside the mesh, and which hop is failing?",
-    callouts: [
-      {
-        title: "Mesh at a glance",
-        body: "Gateway traffic, 5xx split into app errors vs Envoy errors, p95 latency, and the share of TCP bytes encrypted with mTLS.",
-        box: { x: 1.2, y: 8.25, w: 97.7, h: 7.75 },
-      },
-      {
-        title: "Mesh traffic graph",
-        body: "Internet → Istio Gateway → services → external dependencies (RDS, supplier APIs), grouped by namespace. Edges are coloured by 5xx rate and marked mTLS or plain text.",
-        box: { x: 1.2, y: 16.5, w: 97.7, h: 38.65 },
-      },
-      {
-        title: "Services: health",
-        body: "Requests/s, 5xx/s and 5xx % for every service in the mesh, side by side.",
-        box: { x: 1.2, y: 55.65, w: 48.5, h: 14.25 },
-      },
-      {
-        title: "Calls between services",
-        body: "Each source → destination edge with its own rate and errors, which pinpoints the failing hop.",
-        box: { x: 50.4, y: 55.65, w: 48.5, h: 14.25 },
-      },
-      {
-        title: "TCP connections (ztunnel)",
-        body: "L4 view for traffic Istio can't see as HTTP (Postgres, Valkey), with throughput and how much of it is mTLS.",
-        box: { x: 1.2, y: 70.4, w: 97.7, h: 14.2 },
-      },
-      {
-        title: "Requests/s & p95 latency per call",
-        body: "Rate and tail latency for each Gateway → service route over time, so a slow route stands out from the rest.",
-        box: { x: 1.2, y: 85.15, w: 97.7, h: 14.2 },
-      },
-    ],
-    built: [
-      "Istio ambient (ztunnel + waypoints), Gateway API",
-      "istio_requests_total / istio_tcp_* metrics",
-      "Custom graph panel built by the dashboard generator",
     ],
   },
   {
