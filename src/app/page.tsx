@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Skills from "@/components/Skills";
 import Observability from "@/components/Observability";
+import MonitoringShowcase from "@/components/MonitoringShowcase";
 import Projects from "@/components/Projects";
 import GitHubActivity from "@/components/GitHubActivity";
 import Contact from "@/components/Contact";
@@ -17,6 +18,7 @@ export default function Home() {
         <About />
         <Skills />
         <Observability />
+        <MonitoringShowcase />
         <Projects />
         <GitHubActivity />
         <Contact />

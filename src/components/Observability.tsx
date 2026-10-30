@@ -1,39 +1,47 @@
 "use client";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
-import { SiOpentelemetry, SiDatadog } from "react-icons/si";
+import { SiOpentelemetry, SiKubernetes } from "react-icons/si";
 import {
   FiActivity,
   FiAlertTriangle,
   FiFileText,
-  FiServer,
   FiArrowRight,
+  FiTarget,
+  FiCode,
+  FiArrowDown,
 } from "react-icons/fi";
 
 const pipeline = [
   {
-    label: "Services",
-    sublabel: "eSIM backend · Booking engine",
-    icon: <FiServer />,
+    label: "EKS workloads",
+    sublabel: "Apps · Istio Gateway · ztunnel",
+    icon: <SiKubernetes />,
     color: "slate",
   },
   {
-    label: "OpenTelemetry",
-    sublabel: "SDK instrumentation + Collector",
+    label: "OTel agent",
+    sublabel: "Every node: logs · kubelet · host",
     icon: <SiOpentelemetry />,
     color: "indigo",
   },
   {
+    label: "OTel gateway",
+    sublabel: "Filter · enrich · route per service",
+    icon: <SiOpentelemetry />,
+    color: "violet",
+  },
+  {
     label: "OpenObserve",
-    sublabel: "Traces · logs · infra metrics",
+    sublabel: "Logs · metrics · traces (S3)",
     icon: <FiActivity />,
     color: "sky",
   },
   {
-    label: "Datadog APM",
-    sublabel: "Distributed tracing",
-    icon: <SiDatadog />,
-    color: "violet",
+    label: "SLOs & alerts",
+    sublabel: "Burn-rate paging, as code",
+    icon: <FiTarget />,
+    color: "amber",
   },
 ];
 
@@ -42,29 +50,43 @@ const capabilities = [
     icon: <FiActivity className="text-sky-400 text-xl" />,
     title: "Distributed Tracing",
     description:
-      "Propagated trace context across services with OpenTelemetry so a single request can be followed end-to-end, correlated in OpenObserve and Datadog APM.",
-    projects: ["eSIM", "Booking Engine"],
+      "The Istio Gateway starts every trace and services continue it via traceparent, with OTel Operator auto-instrumentation. Log lines carry the trace_id, so a log jumps straight to its trace.",
+    projects: ["Crown Routes (EKS)", "eSIM", "Booking Engine"],
   },
   {
     icon: <FiFileText className="text-indigo-400 text-xl" />,
     title: "Centralized Logging",
     description:
-      "Shipped application and infrastructure logs into OpenObserve for fast full-text search and correlation with traces during incident debugging.",
-    projects: ["eSIM", "Booking Engine"],
+      "Per-service log streams; app JSON and Gateway access logs parsed into searchable columns; multi-line container logs rebuilt; health-probe noise dropped before it leaves the cluster.",
+    projects: ["Crown Routes (EKS)", "eSIM"],
+  },
+  {
+    icon: <FiTarget className="text-emerald-400 text-xl" />,
+    title: "SLOs & Error Budgets",
+    description:
+      "30-day availability, latency and readiness SLOs per service, measured at the edge, with multi-window burn-rate alerts that page at 14.4× and ticket at 6×.",
+    projects: ["Crown Routes (EKS)"],
   },
   {
     icon: <FiAlertTriangle className="text-amber-400 text-xl" />,
-    title: "Alerting",
+    title: "Platform Alerting",
     description:
-      "Configured OpenObserve alert rules on error rates, latency and infra thresholds to catch issues before customers report them.",
-    projects: ["eSIM", "Booking Engine"],
+      "21 Kubernetes alerts: crash-loops, unavailable replicas, NotReady nodes, disk/PVC space, Gateway 5xx, mesh certificate expiry, Karpenter failures and a dead telemetry pipeline.",
+    projects: ["Crown Routes (EKS)", "eSIM"],
   },
   {
-    icon: <FiServer className="text-emerald-400 text-xl" />,
-    title: "Infra Monitoring",
+    icon: <SiKubernetes className="text-violet-400 text-xl" />,
+    title: "Kubernetes & Mesh Monitoring",
     description:
-      "Tracked host and container-level metrics (CPU, memory, disk, network) alongside application telemetry in one place.",
-    projects: ["eSIM", "Booking Engine"],
+      "Node, pod and NodePool capacity, Karpenter decisions, Istio ambient service map and TCP traffic, from kube-state-metrics, kubelet and Istio telemetry.",
+    projects: ["Crown Routes (EKS)", "Loto"],
+  },
+  {
+    icon: <FiCode className="text-rose-400 text-xl" />,
+    title: "Monitoring as Code",
+    description:
+      "6 dashboards (30 tabs) generated in Python and applied with OpenTofu alongside SLOs and alerts. Trimmed ~490 noisy metric streams that were overflowing the OpenObserve server.",
+    projects: ["Crown Routes (EKS)"],
   },
 ];
 
@@ -73,6 +95,7 @@ const colorRing: Record<string, string> = {
   indigo: "border-indigo-500/30 text-indigo-400 bg-indigo-500/5",
   sky: "border-sky-500/30 text-sky-400 bg-sky-500/5",
   violet: "border-violet-500/30 text-violet-400 bg-violet-500/5",
+  amber: "border-amber-500/30 text-amber-400 bg-amber-500/5",
 };
 
 export default function Observability() {
@@ -94,9 +117,9 @@ export default function Observability() {
             Seeing Into Production
           </h2>
           <p className="text-slate-400 mt-4 max-w-2xl mx-auto">
-            I instrument services with OpenTelemetry and route traces, logs and infra
-            metrics into OpenObserve and Datadog APM — so problems surface as alerts,
-            not as customer tickets.
+            On EKS I run an OpenTelemetry pipeline into a self-hosted OpenObserve, with
+            SLOs, alerts and dashboards all defined as code, so problems surface as
+            alerts, not as customer tickets. Earlier platforms also used Datadog APM.
           </p>
         </motion.div>
 
@@ -132,7 +155,7 @@ export default function Observability() {
         </motion.div>
 
         {/* Capability cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {capabilities.map((c, i) => (
             <motion.div
               key={c.title}
@@ -158,6 +181,15 @@ export default function Observability() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <a
+            href="#dashboards"
+            className="inline-flex items-center gap-2 text-sm text-sky-400 hover:text-sky-300"
+          >
+            See the dashboards <FiArrowDown />
+          </a>
         </div>
       </div>
     </section>
