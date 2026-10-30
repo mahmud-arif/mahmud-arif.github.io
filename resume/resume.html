@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Arif Mahmud - Resume</title>
+<!-- Source for public/Arif_Mahmud_Resume_DevOps.pdf. Rebuild with: resume/build.sh -->
+<style>
+  @page { size: letter; margin: 0.5in 0.55in; }
+  :root { --accent: #1a6b6b; --ink: #1a1a1a; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 9.6pt;
+    line-height: 1.4;
+    color: var(--ink);
+    /* Keeps "ffi" in "Daffodil" from becoming a ligature the PDF text layer drops. */
+    font-variant-ligatures: none;
+  }
+  a { color: inherit; text-decoration: none; white-space: nowrap; }
+  header { text-align: center; }
+  h1 {
+    margin: 0;
+    font-size: 24pt;
+    font-variant: small-caps;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+  .role {
+    font-variant: small-caps;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-size: 10.6pt;
+    margin-top: 2px;
+  }
+  .contact { font-size: 8.8pt; margin-top: 6px; }
+  .contact .sep { margin: 0 5px; font-size: 8pt; }
+  h2 {
+    font-size: 10.6pt;
+    font-variant: small-caps;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    text-align: center;
+    margin: 10px 0 5px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--accent);
+  }
+  p { margin: 0; text-align: justify; }
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px 12px;
+  }
+  .entry { margin-top: 5px; break-inside: avoid; }
+  .entry-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .entry-head b { font-size: 9.9pt; }
+  .entry-head .date, .org { font-style: italic; }
+  ul { margin: 3px 0 0; padding-left: 18px; }
+  li { margin-bottom: 2px; text-align: justify; }
+  li::marker { color: var(--accent); }
+  .stack { font-size: 8.5pt; margin-top: 2px; }
+  .page-break { break-before: page; }
+  .langs { display: grid; grid-template-columns: 1fr 1fr; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Arif Mahmud</h1>
+  <div class="role">DevOps Engineer</div>
+  <div class="contact">
+    <a>Dhaka, Bangladesh 1209</a><span class="sep">◆</span><a>+880 1833-078657</a><span class="sep">◆</span><a href="mailto:mahmudarif1175@gmail.com">mahmudarif1175@gmail.com</a><span class="sep">◆</span><a href="https://github.com/mahmud-arif">github.com/mahmud-arif</a><span class="sep">◆</span><a href="https://www.linkedin.com/in/arif-mahmud-03611a138/">linkedin.com/in/arif-mahmud-03611a138</a>
+  </div>
+</header>
+
+<h2>Professional Summary</h2>
+<p>DevOps Engineer with 5+ years of software and infrastructure experience, currently operating production cloud platforms end-to-end on <b>AWS</b> and <b>GCP</b>. Specialized in container orchestration with <b>Kubernetes (EKS)</b> and <b>ECS</b>, <b>Terraform</b>-driven <b>GitOps</b>, and full-stack observability with <b>OpenTelemetry, OpenObserve and Datadog</b> — building systems that are automated, secure, and instrumented so issues surface as alerts, not outages. A background as a software engineer informs how I design the platforms products run on.</p>
+
+<h2>Skills</h2>
+<div class="skills">
+  <div>▪ Kubernetes (EKS), ECS &amp; Docker</div>
+  <div>▪ Terraform / OpenTofu &amp; Ansible</div>
+  <div>▪ AWS &amp; Google Cloud Platform</div>
+  <div>▪ ArgoCD, Atlantis &amp; GitOps</div>
+  <div>▪ OpenTelemetry, OpenObserve &amp; Datadog</div>
+  <div>▪ Prometheus, Grafana &amp; Loki</div>
+  <div>▪ Jenkins &amp; GitHub Actions</div>
+  <div>▪ Linux Administration &amp; Shell Scripting</div>
+  <div>▪ PostgreSQL, MySQL &amp; BigQuery</div>
+  <div>▪ Python &amp; Go</div>
+  <div>▪ Cloudflare (DNS, CDN &amp; Zero Trust)</div>
+  <div>▪ Git &amp; SVN</div>
+</div>
+
+<h2>Work History</h2>
+<div class="entry">
+  <div class="entry-head"><b>DevOps Engineer</b><span class="date">02/2024 – Current</span></div>
+  <div class="org">Newroz Technologies Limited — Dhaka</div>
+  <ul>
+    <li>Own the full infrastructure lifecycle for five production platforms (Hakim, eSIM, Loto, Travluence and internal data pipelines) — from provisioning through steady-state operation on <b>Amazon EKS, ECS, EC2</b> and <b>Docker</b>.</li>
+    <li>Codify infrastructure with <b>Terraform</b> and drive <b>GitOps</b> delivery through <b>ArgoCD</b> and <b>Atlantis</b>, giving every infrastructure change a reviewable, PR-based workflow across dev, staging and production.</li>
+    <li>Instrument services with <b>OpenTelemetry</b> and operate <b>OpenObserve</b> and <b>Datadog</b> for distributed tracing, log aggregation, alerting and infrastructure monitoring, cutting the time it takes to detect and localize production issues.</li>
+    <li>Built EKS monitoring as code: 30-day availability, latency and readiness <b>SLOs</b> with multi-window burn-rate paging, 21 Kubernetes and mesh alerts, and 6 dashboards generated in <b>Python</b> and applied with <b>OpenTofu</b>; cut ~490 noisy metric streams that were overloading the server.</li>
+    <li>Automate CI/CD pipelines with <b>GitHub Actions</b>, <b>Jenkins</b> and <b>AWS CodeDeploy</b> for containerized and bare-metal workloads, maintaining disciplined version control with <b>Git and SVN</b>.</li>
+    <li>Manage domain, DNS and CDN strategy on <b>Cloudflare</b> — proxied records, SSL/TLS modes and Zero Trust access policies — alongside <b>MySQL/PostgreSQL</b> across cloud and bare-metal environments to sustain high availability.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="entry-head"><b>Software Engineer</b><span class="date">04/2021 – 03/2023</span></div>
+  <div class="org">Adecor Business Solutions — Remote</div>
+  <ul>
+    <li>Built and shipped an e-commerce platform for animation/JSON digital assets end to end, using <b>Strapi, React</b> and <b>Next.js</b>, deployed on <b>AWS EC2, S3</b> and load-balanced <b>RDS (PostgreSQL)</b>.</li>
+    <li>Integrated <b>Stripe</b> for checkout and payment processing across the platform.</li>
+    <li>Wrote scalable, maintainable code with long-term stability as a design goal, not an afterthought.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="entry-head"><b>Software Developer</b><span class="date">04/2020 – 03/2021</span></div>
+  <div class="org">Spring Rain Ltd — Dhaka, Bangladesh</div>
+  <ul>
+    <li>Built tour and auth microservices with <b>Koa.js</b>, backed by <b>DynamoDB</b> and <b>SQS</b>, within a broader micro-service architecture.</li>
+    <li>Developed the admin back office using <b>React</b> and <b>Redux</b>.</li>
+    <li>Modernized legacy codebases to current development standards, improving functionality and maintainability.</li>
+  </ul>
+</div>
+
+<h2 class="page-break">Projects</h2>
+<div class="entry">
+  <div class="entry-head"><b>EKS Platform Monitoring — OpenTelemetry &amp; OpenObserve</b></div>
+  <ul>
+    <li>Built an OpenTelemetry agent/gateway pipeline on Amazon EKS (Karpenter on Graviton spot, Istio ambient mesh with Gateway API) into a self-hosted OpenObserve for logs, metrics and traces.</li>
+    <li>Defined per-service SLOs (99.5% availability, 95% of requests under 500 ms, 99.9% readiness) measured at the gateway, with burn-rate alerts that page at 14.4× and open a ticket at 6×.</li>
+    <li>Shipped 21 platform alerts (crash-loops, NotReady nodes, PVC space, gateway 5xx, mesh certificate expiry, Karpenter failures, dead telemetry) and 6 dashboards covering service map, cluster health, autoscaling and incident triage — all generated in Python and applied with OpenTofu.</li>
+  </ul>
+  <div class="stack"><b>Stack:</b> Amazon EKS, Karpenter, Istio Ambient, Gateway API, OpenTelemetry Collector &amp; Operator, OpenObserve, OpenTofu, Python, kube-state-metrics</div>
+</div>
+
+<div class="entry">
+  <div class="entry-head"><b>Enterprise Multi-Account AWS Infrastructure with Terraform &amp; GitOps</b></div>
+  <ul>
+    <li>Architected and deployed enterprise-grade AWS infrastructure across 2 environments (staging, production) using Terraform with Atlantis for automated, PR-driven CI/CD workflows.</li>
+    <li>Implemented a secure multi-account strategy with AWS IAM Identity Center SSO, IRSA (IAM Roles for Service Accounts), cross-account ECR replication, and automated state management on S3/DynamoDB backends.</li>
+    <li>Managed domain routing and edge security with Cloudflare — proxied DNS records, ACM/SSL certificate validation and CDN distribution — in front of the ArgoCD, Grafana and application endpoints.</li>
+  </ul>
+  <div class="stack"><b>Stack:</b> Terraform, Atlantis, GitOps, AWS (EKS, VPC, RDS, ECR, S3, Route53, IAM, ACM, EFS, CloudWatch), Helm, ArgoCD, AWS Load Balancer Controller, External DNS, Cloudflare, Grafana, Loki, Prometheus, IAM Identity Center, IRSA, SSL/TLS automation, Secrets Manager</div>
+</div>
+
+<div class="entry">
+  <div class="entry-head"><b>eSIM Platform — Infrastructure &amp; Observability</b></div>
+  <ul>
+    <li>Designed and deployed containerized reverse-proxy infrastructure and Cloudflare-managed domain routing for an eSIM management platform across dev and production environments.</li>
+    <li>Automated deployment workflows with Docker Compose and AWS CodeDeploy, with OpenTelemetry-instrumented traces shipped to Datadog APM and OpenObserve for logs, alerting and infra monitoring.</li>
+    <li>Implemented security best practices including custom headers, request tracing, and environment-specific configuration management.</li>
+  </ul>
+  <div class="stack"><b>Stack:</b> Terraform/OpenTofu, AWS (VPC, ALB, RDS, Route53, ACM, ECR, CodeDeploy, CloudWatch), Cloudflare, OpenTelemetry, OpenObserve, Datadog, IaC, CI/CD, Security</div>
+</div>
+
+<div class="entry">
+  <div class="entry-head"><b>Cross-Cloud Data Pipeline — AWS to GCP BigQuery</b></div>
+  <ul>
+    <li>Designed and implemented an end-to-end data migration pipeline using Terraform and Go to move data from AWS RDS to Google BigQuery.</li>
+    <li>Deployed AWS DMS infrastructure with Terraform for automated database replication across multiple VPC environments.</li>
+    <li>Built serverless Cloud Functions in Go with parallel-safe idempotency checks, handling migration control, file operations and batch processing across multiple datasets.</li>
+    <li>Added error handling and alerting with migration control tables, lock management and automated cleanup procedures.</li>
+  </ul>
+  <div class="stack"><b>Stack:</b> Go, Terraform, Google Cloud Platform (BigQuery, Cloud Functions, Cloud Storage), AWS S3, JSON Schema, IaC</div>
+</div>
+
+<h2>Education</h2>
+<div class="entry">
+  <div class="entry-head"><b>B.Sc., Computer Science &amp; Engineering</b><span class="date">12/2018</span></div>
+  <div class="org">Daffodil International University — Dhaka, Bangladesh</div>
+</div>
+<div class="entry">
+  <div class="entry-head"><b>HSC</b><span class="date">2013</span></div>
+  <div class="org">Government Science College — Dhaka, Bangladesh</div>
+</div>
+<div class="entry">
+  <div class="entry-head"><b>SSC</b><span class="date">2011</span></div>
+  <div class="org">Manikpur High School — Companiganj, Noakhali</div>
+</div>
+
+<h2>Languages</h2>
+<div class="langs">
+  <div>Bangla — Native / Bilingual</div>
+  <div>English — Professional Working</div>
+</div>
+
+</body>
+</html>

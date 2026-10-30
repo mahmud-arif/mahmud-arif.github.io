@@ -73,7 +73,7 @@ export default function Contact() {
             {[
                           { icon: <FiMail className="text-sky-400 text-xl" />, label: "Email", value: "mahmudarif1175@gmail.com", href: "mailto:mahmudarif1175@gmail.com" },
               { icon: <FiMapPin className="text-indigo-400 text-xl" />, label: "Location", value: "Dhaka, Bangladesh", href: "#" },
-              { icon: <FiLinkedin className="text-violet-400 text-xl" />, label: "LinkedIn", value: "linkedin.com/in/arif-mahmud", href: "https://www.linkedin.com/in/arif-mahmud-03611a138/" },
+              { icon: <FiLinkedin className="text-violet-400 text-xl" />, label: "LinkedIn", value: "linkedin.com/in/arif-mahmud-03611a138", href: "https://www.linkedin.com/in/arif-mahmud-03611a138/" },
               { icon: <FiGithub className="text-emerald-400 text-xl" />, label: "GitHub (DevOps)", value: "github.com/arifmahmud-devops", href: "https://github.com/arifmahmud-devops" },
               { icon: <FiGithub className="text-emerald-400 text-xl" />, label: "GitHub (Personal)", value: "github.com/mahmud-arif", href: "https://github.com/mahmud-arif" },
             ].map((item) => (
